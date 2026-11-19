@@ -17,6 +17,7 @@ const ALLOWED_MAPPING_KEYS = [
   "sku",
   "name",
   "category",
+  "weightGrams",
   "unit",
   "supplier",
   "minStock",

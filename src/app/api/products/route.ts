@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { apiErrorResponse } from "@/app/api/_lib/error-response";
 import { createProduct, listProducts } from "@/lib/services/inventory-service";
-import type { StockStatus } from "@/types/inventory";
+import type { ProductStatusFilter } from "@/types/inventory";
 
 export const dynamic = "force-dynamic";
 
-const ALLOWED_STATUSES = new Set(["ALL", "OK", "LOW", "ZERO"]);
+const ALLOWED_STATUSES = new Set(["ALL", "IN_STOCK", "OK", "LOW", "ZERO"]);
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = request.nextUrl;
     const rawStatus = searchParams.get("status") ?? "ALL";
     const status = ALLOWED_STATUSES.has(rawStatus)
-      ? (rawStatus as StockStatus | "ALL")
+      ? (rawStatus as ProductStatusFilter)
       : "ALL";
 
     const data = await listProducts({

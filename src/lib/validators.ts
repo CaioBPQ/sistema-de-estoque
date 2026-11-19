@@ -54,16 +54,29 @@ const nonNegativeQty = z.coerce
   .max(1_000_000, "Valor excede o limite permitido")
   .transform((val) => roundQuantity(val));
 
+const optionalNonNegativeWeight = z
+  .union([
+    z.coerce
+      .number({ invalid_type_error: "Peso deve ser um número válido" })
+      .finite("Peso inválido")
+      .min(0, "O peso não pode ser negativo")
+      .max(100_000, "Peso excede o limite permitido")
+      .transform((val) => roundQuantity(val, 2)),
+    z.null(),
+  ])
+  .optional();
+
 export const productCreateSchema = z.object({
   sku: z
     .string()
     .trim()
-    .min(2, "SKU deve ter pelo menos 2 caracteres")
-    .max(60, "SKU muito longo")
+    .min(2, "Código/SKU deve ter pelo menos 2 caracteres")
+    .max(60, "Código/SKU muito longo")
     .transform(normalizeSku),
-  name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(160),
-  category: z.string().trim().min(2, "Categoria obrigatória").max(80),
+  name: z.string().trim().min(2, "Descrição do volante obrigatória").max(160),
+  category: z.string().trim().min(2, "Montadora/Categoria obrigatória").max(80),
   unit: z.string().trim().min(1, "Unidade obrigatória").max(20).default("un"),
+  weightGrams: optionalNonNegativeWeight,
   supplier: optionalTrimmedString(120),
   minStock: nonNegativeQty.default(0),
   currentStock: nonNegativeQty.default(0),
@@ -74,13 +87,14 @@ export const productUpdateSchema = z.object({
   sku: z
     .string()
     .trim()
-    .min(2, "SKU deve ter pelo menos 2 caracteres")
+    .min(2, "Código/SKU deve ter pelo menos 2 caracteres")
     .max(60)
     .transform(normalizeSku)
     .optional(),
-  name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(160).optional(),
-  category: z.string().trim().min(2, "Categoria obrigatória").max(80).optional(),
+  name: z.string().trim().min(2, "Descrição do volante obrigatória").max(160).optional(),
+  category: z.string().trim().min(2, "Montadora/Categoria obrigatória").max(80).optional(),
   unit: z.string().trim().min(1, "Unidade obrigatória").max(20).optional(),
+  weightGrams: optionalNonNegativeWeight,
   supplier: optionalTrimmedString(120),
   minStock: nonNegativeQty.optional(),
   active: z.boolean().optional(),
@@ -160,7 +174,8 @@ export const importCommitRowSchema = z.object({
     .max(60)
     .transform(normalizeSku),
   name: z.string().trim().min(1, "Nome obrigatório").max(160),
-  category: z.string().trim().min(1).max(80).default("Geral"),
+  category: z.string().trim().min(1).max(80).default("Outros"),
+  weightGrams: optionalNonNegativeWeight,
   unit: z.string().trim().min(1).max(20).default("un"),
   supplier: optionalTrimmedString(120),
   minStock: nonNegativeQty.default(0),
@@ -169,6 +184,8 @@ export const importCommitRowSchema = z.object({
 
 export const importCommitSchema = z.object({
   rows: z.array(importCommitRowSchema).min(1, "Nenhuma linha válida para importar").max(5000),
-  strategy: z.enum(["SKIP", "REPLACE_STOCK", "ADD_STOCK"]).default("SKIP"),
+  strategy: z
+    .enum(["SKIP", "UPDATE_METADATA", "REPLACE_STOCK", "ADD_STOCK"])
+    .default("SKIP"),
   collaboratorId: optionalTrimmedString(64),
 });

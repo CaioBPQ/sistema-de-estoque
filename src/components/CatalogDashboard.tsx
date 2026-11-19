@@ -9,7 +9,9 @@ import {
   ArrowDownToLine,
   ArrowUpFromLine,
   Boxes,
+  FileSpreadsheet,
   History,
+  Info,
   PackageCheck,
   Pencil,
   Plus,
@@ -18,8 +20,8 @@ import {
 } from "lucide-react";
 import { useInventoryUI } from "@/components/AppShell";
 import { StockStatusBadge } from "@/components/StatusBadge";
-import { formatQuantity } from "@/lib/format";
-import type { DashboardSummary, ProductDTO, StockStatus } from "@/types/inventory";
+import { formatQuantity, formatWeight } from "@/lib/format";
+import type { DashboardSummary, ProductDTO, ProductStatusFilter } from "@/types/inventory";
 
 const EMPTY_SUMMARY: DashboardSummary = {
   totalProducts: 0,
@@ -47,7 +49,7 @@ export function CatalogDashboard() {
 
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("ALL");
-  const [statusFilter, setStatusFilter] = useState<StockStatus | "ALL">("ALL");
+  const [statusFilter, setStatusFilter] = useState<ProductStatusFilter>("ALL");
   const [includeInactive, setIncludeInactive] = useState(false);
   const [confirmArchiveId, setConfirmArchiveId] = useState<string | null>(null);
 
@@ -65,7 +67,7 @@ export function CatalogDashboard() {
         cache: "no-store",
       });
       if (!res.ok) {
-        throw new Error("Não foi possível carregar o catálogo de produtos.");
+        throw new Error("Não foi possível carregar o catálogo de volantes.");
       }
       const json = (await res.json()) as {
         products: ProductDTO[];
@@ -74,7 +76,7 @@ export function CatalogDashboard() {
       setProducts(json.products);
       setSummary(json.summary);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao carregar produtos.");
+      setError(err instanceof Error ? err.message : "Erro ao carregar volantes.");
     } finally {
       setLoading(false);
     }
@@ -93,21 +95,24 @@ export function CatalogDashboard() {
       });
       if (!res.ok) {
         const json = (await res.json()) as { error?: string };
-        throw new Error(json.error ?? "Falha ao atualizar status do produto.");
+        throw new Error(json.error ?? "Falha ao atualizar status do volante.");
       }
       setConfirmArchiveId(null);
       showToast(
         product.active
-          ? `Produto ${product.name} arquivado (histórico preservado).`
-          : `Produto ${product.name} reativado no catálogo.`
+          ? `Volante ${product.name} arquivado (histórico preservado).`
+          : `Volante ${product.name} reativado no catálogo.`
       );
       triggerRefresh();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "Erro ao atualizar produto.", "error");
+      showToast(err instanceof Error ? err.message : "Erro ao atualizar volante.", "error");
     }
   };
 
-  const criticalItems = products.filter((p) => p.active && (p.status === "ZERO" || p.status === "LOW"));
+  const criticalItems = products.filter(
+    (p) => p.active && (p.status === "ZERO" || p.status === "LOW")
+  );
+  const needsInitialCount = summary.totalProducts > 0 && summary.totalUnits === 0;
 
   return (
     <div className="space-y-6">
@@ -115,10 +120,10 @@ export function CatalogDashboard() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Catálogo & Saldo em Tempo Real
+            Catálogo de Volantes & Saldo em Tempo Real
           </h1>
           <p className="text-sm text-slate-500">
-            Acompanhe quantidades disponíveis, alertas de reposição e registre saídas em segundos.
+            Controle exclusivo de volantes por código, montadora e peso, com rastreabilidade total de saídas.
           </p>
         </div>
 
@@ -135,7 +140,7 @@ export function CatalogDashboard() {
             className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-blue-700"
           >
             <Plus className="h-4 w-4" />
-            Novo Produto
+            Novo Volante
           </button>
         </div>
       </div>
@@ -151,7 +156,7 @@ export function CatalogDashboard() {
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-              SKUs Ativos
+              Modelos Ativos
             </span>
             <Boxes className="h-4 w-4 text-blue-600" />
           </div>
@@ -159,7 +164,7 @@ export function CatalogDashboard() {
             {summary.totalProducts}
           </p>
           <p className="tabular-nums mt-0.5 text-xs text-slate-500">
-            {formatQuantity(summary.totalUnits)} unidades totais
+            {formatQuantity(summary.totalUnits)} volantes em estoque
           </p>
         </button>
 
@@ -191,14 +196,14 @@ export function CatalogDashboard() {
         >
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wide text-rose-700">
-              Itens Zerados
+              Modelos Zerados
             </span>
             <XCircle className="h-4 w-4 text-rose-500" />
           </div>
           <p className="tabular-nums mt-2 text-2xl font-bold text-rose-700">
             {summary.zeroStockCount}
           </p>
-          <p className="mt-0.5 text-xs text-slate-500">Reposição urgente</p>
+          <p className="mt-0.5 text-xs text-slate-500">Sem saldo lançado</p>
         </button>
 
         <Link
@@ -218,37 +223,76 @@ export function CatalogDashboard() {
         </Link>
       </div>
 
-      {/* Critical Stock Banner */}
-      {(summary.zeroStockCount > 0 || summary.lowStockCount > 0) && statusFilter === "ALL" && !search && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4">
+      {/* Onboarding Banner when catalog was seeded without stock quantities */}
+      {needsInitialCount && statusFilter === "ALL" && !search ? (
+        <div className="rounded-2xl border border-blue-200 bg-blue-50/80 p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-2.5">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+              <Info className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
               <div>
-                <p className="text-sm font-bold text-amber-950">
-                  Atenção para reposição de estoque
+                <p className="text-sm font-bold text-blue-950">
+                  Catálogo base de {summary.totalProducts} volantes carregado (saldos zerados)
                 </p>
-                <p className="text-xs text-amber-800">
-                  Há {summary.zeroStockCount} item(ns) zerado(s) e {summary.lowStockCount} com
-                  estoque baixo.
+                <p className="text-xs text-blue-800">
+                  As quantidades da planilha de pedidos não foram usadas como saldo. Lance a contagem
+                  física ou chegada de peças via <strong>Nova Entrada</strong> ou{" "}
+                  <strong>Importar Planilha</strong>.
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {criticalItems.slice(0, 3).map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => openEntryModal(item.id)}
-                  className="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-amber-900 shadow-sm ring-1 ring-amber-200 hover:bg-amber-100"
-                >
-                  <ArrowDownToLine className="h-3.5 w-3.5 text-emerald-600" />
-                  Repor {item.name}
-                </button>
-              ))}
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => openEntryModal()}
+                className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+              >
+                <ArrowDownToLine className="h-3.5 w-3.5" />
+                Lançar Entrada / Contagem
+              </button>
+              <Link
+                href="/importacao"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-blue-300 bg-white px-3 py-2 text-xs font-bold text-blue-800 hover:bg-blue-100"
+              >
+                <FileSpreadsheet className="h-3.5 w-3.5" />
+                Importar Saldo Excel
+              </Link>
             </div>
           </div>
         </div>
+      ) : (
+        (summary.zeroStockCount > 0 || summary.lowStockCount > 0) &&
+        statusFilter === "ALL" &&
+        !search && (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50/80 p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-2.5">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                <div>
+                  <p className="text-sm font-bold text-amber-950">
+                    Atenção para reposição de volantes
+                  </p>
+                  <p className="text-xs text-amber-800">
+                    Há {summary.zeroStockCount} modelo(s) zerado(s) e {summary.lowStockCount} com
+                    estoque baixo.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {criticalItems.slice(0, 3).map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => openEntryModal(item.id)}
+                    className="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-amber-900 shadow-sm ring-1 ring-amber-200 hover:bg-amber-100"
+                  >
+                    <ArrowDownToLine className="h-3.5 w-3.5 text-emerald-600" />
+                    Repor {item.sku}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )
       )}
 
       {/* Search & Filters */}
@@ -259,7 +303,7 @@ export function CatalogDashboard() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nome, SKU ou fornecedor..."
+            placeholder="Buscar por código (ex: VI0487), modelo (Gol, Onix) ou montadora..."
             className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
           />
         </div>
@@ -270,7 +314,7 @@ export function CatalogDashboard() {
             onChange={(e) => setCategory(e.target.value)}
             className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
           >
-            <option value="ALL">Todas as categorias</option>
+            <option value="ALL">Todas as montadoras</option>
             {summary.categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -280,10 +324,11 @@ export function CatalogDashboard() {
 
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as StockStatus | "ALL")}
+            onChange={(e) => setStatusFilter(e.target.value as ProductStatusFilter)}
             className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 outline-none focus:border-blue-500"
           >
             <option value="ALL">Todos os status</option>
+            <option value="IN_STOCK">Com saldo (&gt; 0)</option>
             <option value="OK">Disponível</option>
             <option value="LOW">Estoque Baixo</option>
             <option value="ZERO">Zerado</option>
@@ -311,16 +356,16 @@ export function CatalogDashboard() {
       {/* Loading / Empty */}
       {loading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Carregando estoque atualizado...
+          Carregando catálogo de volantes...
         </div>
       ) : products.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
           <PackageCheck className="mx-auto h-10 w-10 text-slate-300" />
           <p className="mt-2 text-base font-semibold text-slate-800">
-            Nenhum produto encontrado
+            Nenhum volante encontrado
           </p>
           <p className="mt-1 text-sm text-slate-500">
-            Ajuste os filtros ou cadastre/importe seus produtos para começar.
+            Ajuste os filtros ou cadastre um novo modelo de volante.
           </p>
           <div className="mt-4 flex justify-center gap-2">
             <button
@@ -328,7 +373,7 @@ export function CatalogDashboard() {
               onClick={() => openProductModal(null, summary.categories)}
               className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
             >
-              Cadastrar Produto
+              Cadastrar Volante
             </button>
           </div>
         </div>
@@ -336,11 +381,15 @@ export function CatalogDashboard() {
         <>
           {/* Desktop Table */}
           <div className="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
+            <div className="border-b border-slate-100 bg-slate-50/50 px-4 py-2 text-xs font-medium text-slate-500">
+              Exibindo <strong className="text-slate-800">{products.length}</strong> modelo(s)
+            </div>
             <table className="w-full border-collapse text-left text-sm">
               <thead className="border-b border-slate-200 bg-slate-50/80 text-xs font-bold uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="px-4 py-3">SKU / Produto</th>
-                  <th className="px-4 py-3">Categoria</th>
+                  <th className="px-4 py-3">Código / Volante</th>
+                  <th className="px-4 py-3">Montadora</th>
+                  <th className="px-4 py-3 text-right">Peso</th>
                   <th className="px-4 py-3 text-right">Saldo Atual</th>
                   <th className="px-4 py-3 text-right">Mínimo</th>
                   <th className="px-4 py-3">Status</th>
@@ -369,7 +418,10 @@ export function CatalogDashboard() {
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3.5 text-slate-600">{product.category}</td>
+                    <td className="px-4 py-3.5 text-slate-700">{product.category}</td>
+                    <td className="tabular-nums px-4 py-3.5 text-right text-xs text-slate-500">
+                      {formatWeight(product.weightGrams)}
+                    </td>
                     <td className="tabular-nums px-4 py-3.5 text-right text-base font-bold text-slate-900">
                       {formatQuantity(product.currentStock, product.unit)}
                     </td>
@@ -386,7 +438,7 @@ export function CatalogDashboard() {
                           disabled={!product.active || product.currentStock <= 0}
                           onClick={() => openWithdrawalModal(product.id)}
                           className="inline-flex items-center gap-1 rounded-lg bg-orange-600 px-2.5 py-1.5 text-xs font-bold text-white hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-40"
-                          title="Registrar retirada deste produto"
+                          title="Registrar retirada deste volante"
                         >
                           <ArrowUpFromLine className="h-3.5 w-3.5" />
                           Retirar
@@ -396,7 +448,7 @@ export function CatalogDashboard() {
                           disabled={!product.active}
                           onClick={() => openEntryModal(product.id)}
                           className="inline-flex items-center gap-1 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-bold text-emerald-700 hover:bg-emerald-100 disabled:opacity-40"
-                          title="Registrar entrada deste produto"
+                          title="Registrar entrada deste volante"
                         >
                           <ArrowDownToLine className="h-3.5 w-3.5" />
                           Entrada
@@ -405,7 +457,7 @@ export function CatalogDashboard() {
                           type="button"
                           onClick={() => openProductModal(product, summary.categories)}
                           className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-                          title="Editar produto"
+                          title="Editar volante"
                           aria-label={`Editar ${product.name}`}
                         >
                           <Pencil className="h-4 w-4" />
@@ -427,8 +479,8 @@ export function CatalogDashboard() {
                                 : handleToggleActive(product)
                             }
                             className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-                            title={product.active ? "Arquivar produto" : "Reativar produto"}
-                            aria-label={product.active ? "Arquivar produto" : "Reativar produto"}
+                            title={product.active ? "Arquivar volante" : "Reativar volante"}
+                            aria-label={product.active ? "Arquivar volante" : "Reativar volante"}
                           >
                             {product.active ? (
                               <Archive className="h-4 w-4" />
@@ -462,6 +514,7 @@ export function CatalogDashboard() {
                     <h3 className="mt-1 text-base font-bold text-slate-900">{product.name}</h3>
                     <p className="text-xs text-slate-500">
                       {product.category}
+                      {product.weightGrams !== null ? ` • ${formatWeight(product.weightGrams)}` : ""}
                       {product.supplier ? ` • ${product.supplier}` : ""}
                     </p>
                   </div>

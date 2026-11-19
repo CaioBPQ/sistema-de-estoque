@@ -1,5 +1,7 @@
 export type StockStatus = "OK" | "LOW" | "ZERO";
 
+export type ProductStatusFilter = StockStatus | "ALL" | "IN_STOCK";
+
 export type MovementType = "ENTRY" | "EXIT" | "IMPORT";
 
 export interface ProductDTO {
@@ -8,6 +10,7 @@ export interface ProductDTO {
   name: string;
   category: string;
   unit: string;
+  weightGrams: number | null;
   supplier: string | null;
   minStock: number;
   currentStock: number;
@@ -96,6 +99,7 @@ export type ImportColumnKey =
   | "sku"
   | "name"
   | "category"
+  | "weightGrams"
   | "unit"
   | "supplier"
   | "minStock"
@@ -103,13 +107,18 @@ export type ImportColumnKey =
 
 export type ImportColumnMapping = Record<ImportColumnKey, string | null>;
 
-export type ImportConflictStrategy = "SKIP" | "REPLACE_STOCK" | "ADD_STOCK";
+export type ImportConflictStrategy =
+  | "SKIP"
+  | "UPDATE_METADATA"
+  | "REPLACE_STOCK"
+  | "ADD_STOCK";
 
 export interface ImportPreviewRow {
   rowNumber: number;
   sku: string;
   name: string;
   category: string;
+  weightGrams: number | null;
   unit: string;
   supplier: string | null;
   minStock: number;
@@ -136,6 +145,7 @@ export interface ImportCommitRow {
   sku: string;
   name: string;
   category: string;
+  weightGrams?: number | null;
   unit: string;
   supplier?: string | null;
   minStock: number;

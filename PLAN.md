@@ -113,6 +113,20 @@
   - **Agente responsável:** Gemini 4 Hydrogen
   - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
 
+### Fase 2 — Especialização Exclusiva para Estoque de Volantes (Base Garfer)
+
+- [x] **Tarefa 8 (Modelo `weightGrams`, Base Garfer 235 Volantes & Importador Inteligente):**
+  - **O que fazer:** Adicionar campo `weightGrams` em `prisma/schema.prisma`, atualizar `prisma/seed.ts` com os 235 volantes de `prisma/data/volantes-garfer.json` (todos com `currentStock: 0`, `supplier: "Garfer"`, `minStock: 2`, preservando os códigos sem usar quantidades de pedido como saldo), atualizar DTOs/validadores/formatadores e aprimorar `import-service.ts` para pular linhas de cabeçalho prévio, reconhecer `CÓDIGO`/`PESO`/`DESCRIÇÃO`, inferir montadora (`VOL <MARCA>`) e ignorar rodapés (`TOTAIS`/`STATUS`).
+  - **Arquivos exclusivos:** `prisma/schema.prisma`, `prisma/seed.ts`, `prisma/data/volantes-garfer.json`, `src/types/inventory.ts`, `src/lib/validators.ts`, `src/lib/format.ts`, `src/lib/services/inventory-service.ts`, `src/lib/services/import-service.ts`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run db:reset && npm run typecheck`
+
+- [x] **Tarefa 9 (UI Especializada em Volantes, Busca Rápida e Testes Garfer):**
+  - **O que fazer:** Atualizar terminologia de UI para estoque exclusivo de volantes (Montadora, Peso em gramas, filtro `Com Saldo > 0`, banner orientativo quando saldo total ainda estiver zerado, busca de volante no modal de entrada e `Garfer` pré-preenchido como fornecedor padrão). Atualizar/adicionar teste para parsing do layout Garfer e validar suíte completa + build.
+  - **Arquivos exclusivos:** `src/app/layout.tsx`, `src/components/AppShell.tsx`, `src/components/CatalogDashboard.tsx`, `src/components/ProductFormModal.tsx`, `src/components/QuickEntryModal.tsx`, `src/components/QuickWithdrawalModal.tsx`, `src/components/ExcelImportView.tsx`, `tests/audit-and-import.test.ts`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
+
 ---
 
 ## 4. Parecer do Conselho dos Anciões (Preenchido por: Claude Opus 5.5 High — `@4-conselho.md`)
@@ -121,4 +135,4 @@
   - Nenhum pendente. Durante a auditoria e testes de concorrência, foi identificado e corrigido um deadlock de upgrade de leitura para escrita no SQLite sob múltiplas retiradas simultâneas (`runWithSqliteWriteLock` + validação prévia do colaborador antes de abrir `$transaction`), além de ajuste de fuso horário local no filtro por data e remoção de fetch externo do `next/font/google` no build.
 - **Sugestões Opcionais de Melhoria:**
   - Para uso em produção multi-instância no futuro, migrar o `datasource` do Prisma de SQLite para PostgreSQL mantendo os mesmos serviços e contratos.
-- **Veredito Final:** `APROVADO PARA COMMIT`
+- **Veredito Final:** `APROVADO PARA COMMIT` (Fase 1 e Fase 2 — Estoque de Volantes Garfer validadas com 8/8 testes passando)

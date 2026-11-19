@@ -149,4 +149,40 @@ describe("Log de Auditoria e Importação Excel/CSV", () => {
     expect(resReplace).toEqual({ created: 0, updated: 1, skipped: 0, movementsLogged: 1 });
     expect((await getProductById(existing.id)).currentStock).toBe(4);
   });
+
+  it("interpreta planilha de pedidos Garfer pulando cabeçalho prévio, inferindo montadora e ignorando PED/TOTAIS", async () => {
+    const garferCsv = [
+      ",,,,,,,,,,",
+      "PLANILHA PARA PEDIDOS A BASE DE TROCA GARFER - NOVEMBRO 2026,,,,,,,,,,",
+      "Cliente,,,,Data Inicial,2026-11-14,,,,Hora,",
+      "OBS.,,,,Comercial,,,,,Expedição,",
+      "CÓDIGO,PESO,DESCRIÇÃO,,PED,RET,SUB,REAL,PESO,VALOR,TOTAL",
+      "VI0487,1346,VOL CHEVROLET AGILE,,3,,3,,4038,,0",
+      "VI1171,2052,VOL VW GOL G5,,15,,15,,30780,,0",
+      ",,,,,,,,,,",
+      "TOTAIS,,,,18,0,18,0,34818,,0",
+      "STATUS,,,,",
+      "Resolvido,VI0487,VOL CHEVROLET AGILE,1,Confirmação",
+    ].join("\r\n");
+
+    const { headers, rows } = await parseSpreadsheetBuffer(
+      Buffer.from(garferCsv, "utf-8"),
+      "garfer.csv"
+    );
+
+    const preview = await buildImportPreview("garfer.csv", headers, rows);
+    expect(preview.rawRowCount).toBe(2);
+    expect(preview.validCount).toBe(2);
+
+    const agile = preview.previewRows.find((r) => r.sku === "VI0487");
+    const gol = preview.previewRows.find((r) => r.sku === "VI1171");
+
+    expect(agile?.category).toBe("Chevrolet");
+    expect(agile?.weightGrams).toBe(1346);
+    expect(agile?.currentStock).toBe(0);
+
+    expect(gol?.category).toBe("Volkswagen");
+    expect(gol?.weightGrams).toBe(2052);
+    expect(gol?.currentStock).toBe(0);
+  });
 });

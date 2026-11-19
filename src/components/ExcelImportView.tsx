@@ -10,7 +10,7 @@ import {
   Upload,
 } from "lucide-react";
 import { useInventoryUI } from "@/components/AppShell";
-import { formatQuantity } from "@/lib/format";
+import { formatQuantity, formatWeight } from "@/lib/format";
 import type {
   CollaboratorDTO,
   ImportColumnKey,
@@ -21,9 +21,10 @@ import type {
 } from "@/types/inventory";
 
 const MAPPING_FIELDS: Array<{ key: ImportColumnKey; label: string; required?: boolean }> = [
-  { key: "sku", label: "SKU / Código Interno", required: true },
-  { key: "name", label: "Nome do Produto", required: true },
-  { key: "category", label: "Categoria" },
+  { key: "sku", label: "Código / SKU", required: true },
+  { key: "name", label: "Descrição do Volante", required: true },
+  { key: "category", label: "Montadora (auto-detectada se vazio)" },
+  { key: "weightGrams", label: "Peso (g)" },
   { key: "unit", label: "Unidade de Medida" },
   { key: "supplier", label: "Fornecedor" },
   { key: "minStock", label: "Estoque Mínimo" },
@@ -121,6 +122,7 @@ export function ExcelImportView() {
         sku: r.sku,
         name: r.name,
         category: r.category,
+        weightGrams: r.weightGrams,
         unit: r.unit,
         supplier: r.supplier,
         minStock: r.minStock,
@@ -314,7 +316,20 @@ export function ExcelImportView() {
                     />
                     <span>
                       <strong className="block text-slate-900">Pular existentes</strong>
-                      Importa apenas os produtos novos.
+                      Importa apenas os volantes novos.
+                    </span>
+                  </label>
+                  <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-slate-200 p-2.5 hover:bg-slate-50">
+                    <input
+                      type="radio"
+                      name="strategy"
+                      checked={strategy === "UPDATE_METADATA"}
+                      onChange={() => setStrategy("UPDATE_METADATA")}
+                      className="mt-0.5"
+                    />
+                    <span>
+                      <strong className="block text-slate-900">Atualizar descrição/peso (manter saldo)</strong>
+                      Útil para planilhas de pedido sem sobrescrever o estoque real.
                     </span>
                   </label>
                   <label className="flex cursor-pointer items-start gap-2 rounded-xl border border-slate-200 p-2.5 hover:bg-slate-50">
@@ -402,10 +417,10 @@ export function ExcelImportView() {
                 <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 font-bold uppercase text-slate-500">
                   <tr>
                     <th className="px-3 py-2.5">Linha</th>
-                    <th className="px-3 py-2.5">SKU</th>
-                    <th className="px-3 py-2.5">Produto</th>
-                    <th className="px-3 py-2.5">Categoria</th>
-                    <th className="px-3 py-2.5 text-right">Mínimo</th>
+                    <th className="px-3 py-2.5">Código</th>
+                    <th className="px-3 py-2.5">Volante</th>
+                    <th className="px-3 py-2.5">Montadora</th>
+                    <th className="px-3 py-2.5 text-right">Peso</th>
                     <th className="px-3 py-2.5 text-right">Saldo Planilha</th>
                     <th className="px-3 py-2.5">Status / Validação</th>
                   </tr>
@@ -425,7 +440,7 @@ export function ExcelImportView() {
                       </td>
                       <td className="px-3 py-2 text-slate-600">{row.category}</td>
                       <td className="tabular-nums px-3 py-2 text-right text-slate-600">
-                        {formatQuantity(row.minStock, row.unit)}
+                        {formatWeight(row.weightGrams)}
                       </td>
                       <td className="tabular-nums px-3 py-2 text-right font-bold text-slate-900">
                         {formatQuantity(row.currentStock, row.unit)}

@@ -22,30 +22,99 @@ function normalizeHeader(value: string): string {
     .trim();
 }
 
+const BRAND_MAP: Record<string, string> = {
+  CHEVROLET: "Chevrolet",
+  GM: "Chevrolet",
+  CITROEN: "Citroën",
+  FIAT: "Fiat",
+  FORD: "Ford",
+  HONDA: "Honda",
+  HYUNDAI: "Hyundai",
+  HYUNDAY: "Hyundai",
+  KIA: "Kia",
+  IVECO: "Iveco",
+  MB: "Mercedes-Benz",
+  MERCEDES: "Mercedes-Benz",
+  MITSUBICHI: "Mitsubishi",
+  MITSUBISHI: "Mitsubishi",
+  PEUGEOT: "Peugeot",
+  RENAULT: "Renault",
+  NISSAN: "Nissan",
+  TOYOTA: "Toyota",
+  VW: "Volkswagen",
+  VOLKSWAGEN: "Volkswagen",
+};
+
+export function inferAutomakerFromName(name: string, fallback = "Outros"): string {
+  const words = name.trim().toUpperCase().split(/\s+/);
+  if (words.length >= 2 && (words[0] === "VOL" || words[0] === "VOLANTE")) {
+    const candidate = words[1];
+    if (BRAND_MAP[candidate]) {
+      return BRAND_MAP[candidate];
+    }
+  }
+  for (const word of words) {
+    if (BRAND_MAP[word]) {
+      return BRAND_MAP[word];
+    }
+  }
+  return fallback;
+}
+
 const COLUMN_ALIASES: Record<ImportColumnKey, string[]> = {
-  sku: ["sku", "codigo", "cod", "codigo interno", "ref", "referencia", "id"],
-  name: ["nome", "produto", "descricao", "item", "material", "nome do produto"],
-  category: ["categoria", "grupo", "familia", "tipo"],
+  sku: ["sku", "codigo", "cod", "codigo interno", "ref", "referencia"],
+  name: ["descricao", "nome", "produto", "volante", "item", "material", "nome do produto"],
+  category: ["montadora", "marca", "categoria", "grupo", "familia", "tipo"],
+  weightGrams: ["peso", "peso g", "peso gramas", "weight"],
   unit: ["unidade", "un", "und", "um", "unidade de medida", "medida"],
-  supplier: ["fornecedor", "fabricante", "marca", "distribuidor"],
+  supplier: ["fornecedor", "fabricante", "distribuidor"],
   minStock: ["estoque minimo", "minimo", "qtd minima", "alerta", "estoque alerta", "min"],
   currentStock: [
     "saldo atual",
-    "quantidade",
     "saldo",
     "estoque atual",
     "estoque",
+    "quantidade",
     "qtd",
     "qtde",
     "disponivel",
   ],
 };
 
+function uniquifyHeaders(rawHeaders: string[]): string[] {
+  const counts = new Map<string, number>();
+  return rawHeaders.map((raw, idx) => {
+    const base = raw.trim() || `Coluna_${idx + 1}`;
+    const prev = counts.get(base) ?? 0;
+    counts.set(base, prev + 1);
+    return prev === 0 ? base : `${base} (${prev + 1})`;
+  });
+}
+
+function isLikelyHeaderRow(cells: string[]): boolean {
+  const normalized = cells.map(normalizeHeader).filter(Boolean);
+  if (normalized.length < 2) return false;
+  const hasCode = normalized.some((h) => COLUMN_ALIASES.sku.includes(h));
+  const hasName = normalized.some((h) => COLUMN_ALIASES.name.includes(h));
+  return hasCode && hasName;
+}
+
+function isFooterSummaryRow(cells: string[]): boolean {
+  const firstNonEmpty = cells.find((c) => c.trim().length > 0)?.trim().toUpperCase() ?? "";
+  return (
+    firstNonEmpty === "TOTAIS" ||
+    firstNonEmpty === "TOTAL" ||
+    firstNonEmpty === "STATUS" ||
+    firstNonEmpty === "RESOLVIDO"
+  );
+}
+
 export function suggestColumnMapping(headers: string[]): ImportColumnMapping {
   const mapping: ImportColumnMapping = {
     sku: null,
     name: null,
     category: null,
+    weightGrams: null,
     unit: null,
     supplier: null,
     minStock: null,
@@ -137,18 +206,25 @@ function parseCsvText(rawText: string): { headers: string[]; rows: Record<string
     throw new ValidationError("O arquivo CSV está vazio.");
   }
 
-  const headerLine = lines[0];
-  const semicolonCount = (headerLine.match(/;/g) ?? []).length;
-  const commaCount = (headerLine.match(/,/g) ?? []).length;
+  const sampleLine = lines.slice(0, 10).find((l) => l.includes(";") || l.includes(",")) ?? lines[0];
+  const semicolonCount = (sampleLine.match(/;/g) ?? []).length;
+  const commaCount = (sampleLine.match(/,/g) ?? []).length;
   const delimiter = semicolonCount >= commaCount ? ";" : ",";
 
-  const rawHeaders = splitCsvLine(headerLine, delimiter);
-  const headers = rawHeaders.map((h, idx) => h || `Coluna_${idx + 1}`);
+  const parsedLines = lines.map((line) => splitCsvLine(line, delimiter));
+  let headerIdx = parsedLines.slice(0, 20).findIndex(isLikelyHeaderRow);
+  if (headerIdx === -1) {
+    headerIdx = 0;
+  }
 
+  const headers = uniquifyHeaders(parsedLines[headerIdx]);
   const rows: Record<string, string>[] = [];
-  for (let i = 1; i < lines.length && rows.length < MAX_IMPORT_ROWS; i += 1) {
-    const values = splitCsvLine(lines[i], delimiter);
+
+  for (let i = headerIdx + 1; i < parsedLines.length && rows.length < MAX_IMPORT_ROWS; i += 1) {
+    const values = parsedLines[i];
     if (values.every((v) => v === "")) continue;
+    if (isFooterSummaryRow(values)) break;
+
     const record: Record<string, string> = {};
     headers.forEach((header, idx) => {
       record[header] = values[idx] ?? "";
@@ -192,38 +268,47 @@ async function parseXlsxBuffer(
     throw new ValidationError("A planilha Excel não contém abas ou linhas preenchidas.");
   }
 
-  const headerRow = worksheet.getRow(1);
-  const headers: string[] = [];
+  let headerRowIndex = 1;
+  const maxScan = Math.min(20, worksheet.rowCount);
+  for (let r = 1; r <= maxScan; r += 1) {
+    const row = worksheet.getRow(r);
+    const colCount = Math.max(row.cellCount, row.actualCellCount);
+    const cells = Array.from({ length: colCount }, (_, idx) =>
+      cellValueToString(row.getCell(idx + 1).value)
+    );
+    if (isLikelyHeaderRow(cells)) {
+      headerRowIndex = r;
+      break;
+    }
+  }
+
+  const headerRow = worksheet.getRow(headerRowIndex);
+  const rawHeaders: string[] = [];
   const colCount = Math.max(headerRow.cellCount, headerRow.actualCellCount);
 
   for (let c = 1; c <= colCount; c += 1) {
-    const label = cellValueToString(headerRow.getCell(c).value);
-    if (label) {
-      headers.push(label);
-    } else {
-      headers.push(`Coluna_${c}`);
-    }
+    rawHeaders.push(cellValueToString(headerRow.getCell(c).value));
   }
 
+  const headers = uniquifyHeaders(rawHeaders);
   if (headers.length === 0) {
-    throw new ValidationError("Não foi possível identificar o cabeçalho na linha 1 da planilha.");
+    throw new ValidationError("Não foi possível identificar o cabeçalho na planilha.");
   }
 
   const rows: Record<string, string>[] = [];
-  for (let r = 2; r <= worksheet.rowCount && rows.length < MAX_IMPORT_ROWS; r += 1) {
+  for (let r = headerRowIndex + 1; r <= worksheet.rowCount && rows.length < MAX_IMPORT_ROWS; r += 1) {
     const row = worksheet.getRow(r);
+    const cells = Array.from({ length: headers.length }, (_, idx) =>
+      cellValueToString(row.getCell(idx + 1).value)
+    );
+    if (cells.every((c) => c === "")) continue;
+    if (isFooterSummaryRow(cells)) break;
+
     const record: Record<string, string> = {};
-    let hasContent = false;
-
-    for (let c = 1; c <= headers.length; c += 1) {
-      const text = cellValueToString(row.getCell(c).value);
-      if (text !== "") hasContent = true;
-      record[headers[c - 1]] = text;
-    }
-
-    if (hasContent) {
-      rows.push(record);
-    }
+    headers.forEach((header, idx) => {
+      record[header] = cells[idx] ?? "";
+    });
+    rows.push(record);
   }
 
   return { headers, rows };
@@ -281,27 +366,35 @@ export async function buildImportPreview(
     const rawSku = getVal("sku");
     const sku = rawSku ? normalizeSku(rawSku) : "";
     const name = getVal("name");
-    const category = getVal("category") || "Geral";
+    const explicitCategory = getVal("category");
+    const category = explicitCategory || inferAutomakerFromName(name, "Outros");
     const unit = getVal("unit") || "un";
     const supplierVal = getVal("supplier");
-    const supplier = supplierVal.length > 0 ? supplierVal : null;
+    const supplier = supplierVal.length > 0 ? supplierVal : "Garfer";
+
+    const rawWeight = getVal("weightGrams");
+    const weightParsed = rawWeight ? parseLocaleNumber(rawWeight) : null;
 
     const minStockParsed = parseLocaleNumber(getVal("minStock"));
     const currentStockParsed = parseLocaleNumber(getVal("currentStock"));
 
     if (!sku) {
-      errors.push("SKU/Código obrigatório");
+      errors.push("Código/SKU obrigatório");
     } else {
       const previousRow = seenSkusInFile.get(sku);
       if (previousRow !== undefined) {
-        errors.push(`SKU duplicado nesta planilha (já aparece na linha ${previousRow})`);
+        errors.push(`Código duplicado nesta planilha (já aparece na linha ${previousRow})`);
       } else {
         seenSkusInFile.set(sku, rowNumber);
       }
     }
 
     if (!name) {
-      errors.push("Nome do produto obrigatório");
+      errors.push("Descrição do volante obrigatória");
+    }
+
+    if (rawWeight && (weightParsed === null || weightParsed < 0)) {
+      errors.push("Peso (g) inválido");
     }
 
     if (minStockParsed === null || minStockParsed < 0) {
@@ -319,6 +412,7 @@ export async function buildImportPreview(
       sku,
       name,
       category,
+      weightGrams: weightParsed !== null && weightParsed >= 0 ? roundQuantity(weightParsed, 2) : null,
       unit,
       supplier,
       minStock: minStockParsed !== null && minStockParsed >= 0 ? minStockParsed : 0,
@@ -357,11 +451,10 @@ export async function commitImport(input: unknown): Promise<ImportCommitResult> 
 
   const { rows, strategy, collaboratorId } = parsed.data;
 
-  // Reject duplicate SKUs within the submitted payload
   const seen = new Set<string>();
   for (const row of rows) {
     if (seen.has(row.sku)) {
-      throw new ValidationError(`SKU duplicado no lote de importação: ${row.sku}`);
+      throw new ValidationError(`Código/SKU duplicado no lote de importação: ${row.sku}`);
     }
     seen.add(row.sku);
   }
@@ -395,6 +488,7 @@ export async function commitImport(input: unknown): Promise<ImportCommitResult> 
                 sku: row.sku,
                 name: row.name,
                 category: row.category,
+                weightGrams: row.weightGrams ?? null,
                 unit: row.unit,
                 supplier: row.supplier ?? null,
                 minStock: row.minStock,
@@ -425,6 +519,22 @@ export async function commitImport(input: unknown): Promise<ImportCommitResult> 
             continue;
           }
 
+          if (strategy === "UPDATE_METADATA") {
+            await tx.product.update({
+              where: { id: existing.id },
+              data: {
+                name: row.name,
+                category: row.category,
+                weightGrams: row.weightGrams ?? existing.weightGrams,
+                unit: row.unit,
+                supplier: row.supplier ?? existing.supplier,
+                active: true,
+              },
+            });
+            updated += 1;
+            continue;
+          }
+
           const oldStock = roundQuantity(existing.currentStock);
           const nextStock =
             strategy === "ADD_STOCK"
@@ -436,6 +546,7 @@ export async function commitImport(input: unknown): Promise<ImportCommitResult> 
             data: {
               name: row.name,
               category: row.category,
+              weightGrams: row.weightGrams ?? existing.weightGrams,
               unit: row.unit,
               supplier: row.supplier ?? existing.supplier,
               minStock: row.minStock,
@@ -474,47 +585,51 @@ export async function commitImport(input: unknown): Promise<ImportCommitResult> 
 
 export async function generateTemplateXlsx(): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet("Produtos");
+  const sheet = workbook.addWorksheet("Volantes");
 
   sheet.columns = [
-    { header: "SKU", key: "sku", width: 18 },
-    { header: "Nome", key: "name", width: 38 },
-    { header: "Categoria", key: "category", width: 18 },
-    { header: "Unidade", key: "unit", width: 12 },
-    { header: "Fornecedor", key: "supplier", width: 26 },
-    { header: "Estoque Minimo", key: "minStock", width: 16 },
-    { header: "Saldo Atual", key: "currentStock", width: 15 },
+    { header: "CÓDIGO", key: "sku", width: 16 },
+    { header: "DESCRIÇÃO", key: "name", width: 42 },
+    { header: "MONTADORA", key: "category", width: 18 },
+    { header: "PESO", key: "weightGrams", width: 14 },
+    { header: "UNIDADE", key: "unit", width: 12 },
+    { header: "FORNECEDOR", key: "supplier", width: 18 },
+    { header: "ESTOQUE MÍNIMO", key: "minStock", width: 16 },
+    { header: "SALDO ATUAL", key: "currentStock", width: 15 },
   ];
 
   sheet.getRow(1).font = { bold: true };
 
   sheet.addRows([
     {
-      sku: "EPI-CAP-001",
-      name: "Capacete de Segurança Branco",
-      category: "EPIs",
+      sku: "VI0487",
+      name: "VOL CHEVROLET AGILE",
+      category: "Chevrolet",
+      weightGrams: 1346,
       unit: "un",
-      supplier: "SegurPro Distribuidora",
-      minStock: 10,
-      currentStock: 25,
+      supplier: "Garfer",
+      minStock: 2,
+      currentStock: 5,
     },
     {
-      sku: "FER-CHV-014",
-      name: "Chave Combinada 13mm",
-      category: "Ferramentas",
+      sku: "VI0265",
+      name: "VOL FIAT UNO FIRE",
+      category: "Fiat",
+      weightGrams: 2038,
       unit: "un",
-      supplier: "Ferragens Brasil Ltda",
-      minStock: 5,
-      currentStock: 12,
+      supplier: "Garfer",
+      minStock: 2,
+      currentStock: 8,
     },
     {
-      sku: "LIM-DET-008",
-      name: "Detergente Neutro Industrial 5L",
-      category: "Limpeza Técnica",
+      sku: "VI1171",
+      name: "VOL VW GOL G5",
+      category: "Volkswagen",
+      weightGrams: 2052,
       unit: "un",
-      supplier: "Química Industrial Sul",
-      minStock: 4,
-      currentStock: 3,
+      supplier: "Garfer",
+      minStock: 3,
+      currentStock: 10,
     },
   ]);
 
@@ -524,10 +639,10 @@ export async function generateTemplateXlsx(): Promise<Buffer> {
 
 export function generateTemplateCsv(): string {
   const lines = [
-    "SKU;Nome;Categoria;Unidade;Fornecedor;Estoque Minimo;Saldo Atual",
-    "EPI-CAP-001;Capacete de Segurança Branco;EPIs;un;SegurPro Distribuidora;10;25",
-    "FER-CHV-014;Chave Combinada 13mm;Ferramentas;un;Ferragens Brasil Ltda;5;12",
-    "LIM-DET-008;Detergente Neutro Industrial 5L;Limpeza Técnica;un;Química Industrial Sul;4;3",
+    "CÓDIGO;DESCRIÇÃO;MONTADORA;PESO;UNIDADE;FORNECEDOR;ESTOQUE MÍNIMO;SALDO ATUAL",
+    "VI0487;VOL CHEVROLET AGILE;Chevrolet;1346;un;Garfer;2;5",
+    "VI0265;VOL FIAT UNO FIRE;Fiat;2038;un;Garfer;2;8",
+    "VI1171;VOL VW GOL G5;Volkswagen;2052;un;Garfer;3;10",
   ];
   return `\uFEFF${lines.join("\r\n")}`;
 }

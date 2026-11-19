@@ -21,10 +21,10 @@ import type {
   MovementType,
   MovementsListResponse,
   ProductDTO,
+  ProductStatusFilter,
   ProductsListResponse,
   PurchaseEntryDTO,
   StockMovementDTO,
-  StockStatus,
 } from "@/types/inventory";
 
 function normalizeText(value: string): string {
@@ -79,6 +79,7 @@ export function toProductDTO(row: {
   name: string;
   category: string;
   unit: string;
+  weightGrams: number | null;
   supplier: string | null;
   minStock: number;
   currentStock: number;
@@ -94,6 +95,7 @@ export function toProductDTO(row: {
     name: row.name,
     category: row.category,
     unit: row.unit,
+    weightGrams: row.weightGrams !== null ? roundQuantity(row.weightGrams, 2) : null,
     supplier: row.supplier,
     minStock,
     currentStock,
@@ -143,14 +145,14 @@ function toMovementDTO(row: {
 export async function listProducts(filters?: {
   search?: string;
   category?: string;
-  status?: StockStatus | "ALL";
+  status?: ProductStatusFilter;
   includeInactive?: boolean;
 }): Promise<ProductsListResponse> {
   await ensureSqliteReady();
 
   const allActive = await prisma.product.findMany({
     where: filters?.includeInactive ? undefined : { active: true },
-    orderBy: [{ name: "asc" }],
+    orderBy: [{ category: "asc" }, { name: "asc" }],
   });
 
   const startOfToday = new Date();
@@ -195,7 +197,9 @@ export async function listProducts(filters?: {
       if (categoryFilter && categoryFilter !== "ALL" && product.category !== categoryFilter) {
         return false;
       }
-      if (statusFilter && product.status !== statusFilter) {
+      if (statusFilter === "IN_STOCK") {
+        if (product.currentStock <= 0) return false;
+      } else if (statusFilter && product.status !== statusFilter) {
         return false;
       }
       if (searchTerm) {
@@ -248,6 +252,7 @@ export async function createProduct(input: unknown): Promise<ProductDTO> {
             name: data.name,
             category: data.category,
             unit: data.unit,
+            weightGrams: data.weightGrams ?? null,
             supplier: data.supplier,
             minStock: data.minStock,
             currentStock: data.currentStock,
@@ -303,6 +308,7 @@ export async function updateProduct(id: string, input: unknown): Promise<Product
         name: data.name,
         category: data.category,
         unit: data.unit,
+        weightGrams: data.weightGrams,
         supplier: data.supplier,
         minStock: data.minStock,
         active: data.active,

@@ -238,7 +238,7 @@ export function QuickWithdrawalModal({
           {/* Produto */}
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-slate-700">
-              1. Produto *
+              1. Volante *
             </label>
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
@@ -246,7 +246,7 @@ export function QuickWithdrawalModal({
                 type="text"
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
-                placeholder="Buscar produto por nome ou SKU..."
+                placeholder="Buscar volante por código (ex: VI0487), modelo ou montadora..."
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
@@ -259,7 +259,7 @@ export function QuickWithdrawalModal({
               className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             >
               {filteredProducts.length === 0 && (
-                <option value="">Nenhum produto encontrado</option>
+                <option value="">Nenhum volante encontrado</option>
               )}
               {filteredProducts.map((p) => (
                 <option key={p.id} value={p.id}>

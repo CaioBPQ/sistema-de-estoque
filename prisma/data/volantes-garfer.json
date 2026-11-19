@@ -1,0 +1,1882 @@
+[
+  {
+    "sku": "VI0487",
+    "name": "VOL CHEVROLET AGILE",
+    "category": "Chevrolet",
+    "weightGrams": 1346,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0488",
+    "name": "VOL CHEVROLET AGILE AB",
+    "category": "Chevrolet",
+    "weightGrams": 1420,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0451",
+    "name": "VOL CHEVROLET ZAFIRA AB",
+    "category": "Chevrolet",
+    "weightGrams": 1206,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0453",
+    "name": "VOL CHEVROLET ASTRA C/ ALONGADOR",
+    "category": "Chevrolet",
+    "weightGrams": 1998,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0455",
+    "name": "VOL CHEVROLET ASTRA LISO / ZAFIRA",
+    "category": "Chevrolet",
+    "weightGrams": 1422,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0457",
+    "name": "VOL CHEVROLET ASTRA S/ ALONGADOR",
+    "category": "Chevrolet",
+    "weightGrams": 1674,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0459",
+    "name": "VOL CHEVROLET BLAZER / S-10 - PRETO",
+    "category": "Chevrolet",
+    "weightGrams": 2342,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0459CZ",
+    "name": "VOL CHEVROLET BLAZER / S-10 - CINZA",
+    "category": "Chevrolet",
+    "weightGrams": 2342,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0463",
+    "name": "VOL CHEVROLET BLAZER / S-10 NOVA",
+    "category": "Chevrolet",
+    "weightGrams": 2486,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1224",
+    "name": "VOL CHEVROLET BLAZER / S-10 LTZ S/ CONTROLE",
+    "category": "Chevrolet",
+    "weightGrams": 1012,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1225",
+    "name": "VOL CHEVROLET BLAZER / S-10 LTZ C/ CONTROLE",
+    "category": "Chevrolet",
+    "weightGrams": 1012,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0465",
+    "name": "VOL CHEVROLET MONZA",
+    "category": "Chevrolet",
+    "weightGrams": 1872,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0467",
+    "name": "VOL CHEVROLET CELTA ANTIGO 2 RAIOS",
+    "category": "Chevrolet",
+    "weightGrams": 1826,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0469",
+    "name": "VOL CHEVROLET PRISMA",
+    "category": "Chevrolet",
+    "weightGrams": 1754,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0485",
+    "name": "VOL CHEVROLET NOVO CELTA",
+    "category": "Chevrolet",
+    "weightGrams": 1990,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0486",
+    "name": "VOL CHEVROLET CELTA 2014 AB - PRETO",
+    "category": "Chevrolet",
+    "weightGrams": 1160,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1214",
+    "name": "VOL CHEVROLET CELTA 2014 AB - CINZA",
+    "category": "Chevrolet",
+    "weightGrams": 1160,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0471",
+    "name": "VOL CHEVROLET CELTA 3 PONTAS",
+    "category": "Chevrolet",
+    "weightGrams": 1842,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1206",
+    "name": "VOL CHEVROLET MONTANA BASE RETA",
+    "category": "Chevrolet",
+    "weightGrams": 1713,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1248",
+    "name": "VOL CHEVROLET MONTANA BASE RETA C/ CONTROLE",
+    "category": "Chevrolet",
+    "weightGrams": 1713,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0473",
+    "name": "VOL CHEVROLET MONTANA",
+    "category": "Chevrolet",
+    "weightGrams": 1712,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0475",
+    "name": "VOL CHEVROLET CORSA WIND",
+    "category": "Chevrolet",
+    "weightGrams": 1616,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0476",
+    "name": "VOL CHEVROLET CORSA CLASSIC 2014 AB",
+    "category": "Chevrolet",
+    "weightGrams": 1158,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0477",
+    "name": "VOL CHEVROLET CORSA CLASSIC",
+    "category": "Chevrolet",
+    "weightGrams": 1530,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0478",
+    "name": "VOL CHEVROLET D-20",
+    "category": "Chevrolet",
+    "weightGrams": 1742,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0479",
+    "name": "VOL CHEVROLET VECTRA ANTIGO",
+    "category": "Chevrolet",
+    "weightGrams": 1688,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0481",
+    "name": "VOL CHEVROLET VECTRA NOVO AB",
+    "category": "Chevrolet",
+    "weightGrams": 1285,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0483",
+    "name": "VOL CHEVROLET VECTRA NOVO",
+    "category": "Chevrolet",
+    "weightGrams": 1710,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0489",
+    "name": "VOL CHEVROLET VECTRA GT AB C/ CONTROLE",
+    "category": "Chevrolet",
+    "weightGrams": 1285,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0491",
+    "name": "VOL CHEVROLET ONIX - CINZA",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0493",
+    "name": "VOL CHEVROLET ONIX AB - CINZA C/ APLIQUE",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1246",
+    "name": "VOL CHEVROLET ONIX AB - CINZA (EMBORRACHADO)",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0494",
+    "name": "VOL CHEVROLET COBALT - MARROM",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0495",
+    "name": "VOL CHEVROLET COBALT AB - MARROM C/ APLIQUE",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1247",
+    "name": "VOL CHEVROLET COBALT AB - MARROM (EMBORRACHADO)",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1266",
+    "name": "VOL CHEVROLET TRACKER 2021 C/ APLIQUE",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1267",
+    "name": "VOL CHEVROLET TRACKER 2021 (EMBORRACHADO)",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0496",
+    "name": "VOL CHEVROLET CRUZE",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1259",
+    "name": "VOL CHEVROLET CRUZE 2016 - MARROM",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1260",
+    "name": "VOL CHEVROLET CRUZE 2016 - CINZA",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0498CZ",
+    "name": "VOL CHEVROLET SPIN / ONIX C/ CONTROLE - CINZA",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0498MR",
+    "name": "VOL CHEVROLET SPIN / ONIX C/ CONTROLE - MARROM",
+    "category": "Chevrolet",
+    "weightGrams": 1545,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0497",
+    "name": "VOL CHEVROLET MERIVA AB",
+    "category": "Chevrolet",
+    "weightGrams": 1362,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0151",
+    "name": "VOL CITROEN C3",
+    "category": "Citroën",
+    "weightGrams": 1100,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0155",
+    "name": "VOL CITROEN C3 NOVO COM E SEM AB",
+    "category": "Citroën",
+    "weightGrams": 1212,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1210",
+    "name": "VOL CITROEN C3 BASE RETA",
+    "category": "Citroën",
+    "weightGrams": 1212,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1287",
+    "name": "VOL CITROEN C3 2023 EM DIANTE *LANÇAMENTO*",
+    "category": "Citroën",
+    "weightGrams": 1215,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1278",
+    "name": "VOL CITROEN C4 PALLAS - *LANÇAMENTO*",
+    "category": "Citroën",
+    "weightGrams": 1215,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1286",
+    "name": "VOL CITROEN C4 CACTUS - EMBORRACHADO",
+    "category": "Citroën",
+    "weightGrams": 1214,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1289",
+    "name": "VOL CITROEN C4 CACTUS - COM CONTROLE",
+    "category": "Citroën",
+    "weightGrams": 1215,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0156",
+    "name": "VOL CITROEN PICASSO AB",
+    "category": "Citroën",
+    "weightGrams": 1170,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0251AZ",
+    "name": "VOL FIAT DOBLO - AZUL",
+    "category": "Fiat",
+    "weightGrams": 1450,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0251CZ",
+    "name": "VOL FIAT DOBLO - CINZA",
+    "category": "Fiat",
+    "weightGrams": 1450,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0255",
+    "name": "VOL FIAT PALIO ANTIGO",
+    "category": "Fiat",
+    "weightGrams": 1900,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0257",
+    "name": "VOL FIAT PALIO NOVO",
+    "category": "Fiat",
+    "weightGrams": 1842,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0259",
+    "name": "VOL FIAT SIENA",
+    "category": "Fiat",
+    "weightGrams": 1920,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0261",
+    "name": "VOL FIAT PALIO WEEKEND AB",
+    "category": "Fiat",
+    "weightGrams": 1800,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0262AZ",
+    "name": "VOL FIAT PALIO NOVO AB",
+    "category": "Fiat",
+    "weightGrams": 1600,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0263",
+    "name": "VOL FIAT STILO",
+    "category": "Fiat",
+    "weightGrams": 1582,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0265",
+    "name": "VOL FIAT UNO FIRE",
+    "category": "Fiat",
+    "weightGrams": 2038,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0267",
+    "name": "VOL FIAT UNO MILLE / FIORINO",
+    "category": "Fiat",
+    "weightGrams": 1480,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0269",
+    "name": "VOL FIAT UNO SMART",
+    "category": "Fiat",
+    "weightGrams": 1516,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0270",
+    "name": "VOL FIAT UNO VIVACE",
+    "category": "Fiat",
+    "weightGrams": 1600,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1265",
+    "name": "VOL FIAT UNO VIVACE AB",
+    "category": "Fiat",
+    "weightGrams": 1600,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0271",
+    "name": "VOL FIAT BRAVA / MAREA",
+    "category": "Fiat",
+    "weightGrams": 1784,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0273",
+    "name": "VOL FIAT DUCATO NOVA / BOXER / JUMPER",
+    "category": "Fiat",
+    "weightGrams": 1988,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0275",
+    "name": "VOL FIAT PUNTO",
+    "category": "Fiat",
+    "weightGrams": 1530,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1236",
+    "name": "VOL FIAT PUNTO AB",
+    "category": "Fiat",
+    "weightGrams": 1530,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0279",
+    "name": "VOL FIAT NOVA IDEA",
+    "category": "Fiat",
+    "weightGrams": 1150,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0281",
+    "name": "VOL FIAT NOVA IDEA AB",
+    "category": "Fiat",
+    "weightGrams": 1150,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0283",
+    "name": "VOL FIAT GRAND SIENA - CINZA",
+    "category": "Fiat",
+    "weightGrams": 1394,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0284",
+    "name": "VOL FIAT GRAND SIENA AIRBAG - CINZA",
+    "category": "Fiat",
+    "weightGrams": 1394,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0286",
+    "name": "VOL FIAT GRAND SIENA 3 TRAVAS",
+    "category": "Fiat",
+    "weightGrams": 1394,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0150",
+    "name": "VOL FIAT GRAND SIENA SIENA AB 2 TRAVAS CURTA",
+    "category": "Fiat",
+    "weightGrams": 1395,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1201",
+    "name": "VOL FIAT STRADA NOVA",
+    "category": "Fiat",
+    "weightGrams": 1394,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1275",
+    "name": "VOL FIAT STRADA BASE RETA 2021/2023",
+    "category": "Fiat",
+    "weightGrams": 1394,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1288",
+    "name": "VOL FIAT STRADA BASE RETA 2023 EM DIANTE",
+    "category": "Fiat",
+    "weightGrams": 1395,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1244",
+    "name": "VOL FIAT MOBI 3 TRAVAS C/ CONTROLE",
+    "category": "Fiat",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1245",
+    "name": "VOL FIAT MOBI 3 TRAVAS S/ CONTROLE (EMBORRACHADO)",
+    "category": "Fiat",
+    "weightGrams": 1146,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1268",
+    "name": "VOL FIAT MOBI 3 TRAVAS C/ CONTROLE - CÔNICO",
+    "category": "Fiat",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1269",
+    "name": "VOL FIAT MOBI 3 TRAVAS S/ CONTROLE - CÔNICO (EMBORRACHADO)",
+    "category": "Fiat",
+    "weightGrams": 1146,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1264",
+    "name": "VOL FIAT MOBI 2 TRAVAS (EMBORRACHADO)",
+    "category": "Fiat",
+    "weightGrams": 1146,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1261",
+    "name": "VOL FIAT ARGO C/ BORBOLETA",
+    "category": "Fiat",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1272",
+    "name": "VOL FIAT ARGO (EMBORRACHADO)",
+    "category": "Fiat",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1277",
+    "name": "VOL FIAT TORO C/ CONTROLE",
+    "category": "Fiat",
+    "weightGrams": 1140,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0302",
+    "name": "VOL FORD CARGO PEQUENO",
+    "category": "Ford",
+    "weightGrams": 3764,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0351",
+    "name": "VOL FORD FIESTA NOVO",
+    "category": "Ford",
+    "weightGrams": 1566,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0352",
+    "name": "VOL FORD NEW FIESTA (MEXICANO)",
+    "category": "Ford",
+    "weightGrams": 1338,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0353",
+    "name": "VOL FORD ESCORT HOBBY",
+    "category": "Ford",
+    "weightGrams": 1554,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0355",
+    "name": "VOL FORD FIESTA ANTIGO STREET",
+    "category": "Ford",
+    "weightGrams": 1836,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0357",
+    "name": "VOL FORD FIESTA ANTIGO GRANDE",
+    "category": "Ford",
+    "weightGrams": 1870,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0359",
+    "name": "VOL FORD ECOSPORT AB",
+    "category": "Ford",
+    "weightGrams": 1566,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0362CZ",
+    "name": "VOL FORD NEW ECOSPORT C/ ESFERA - CINZA",
+    "category": "Ford",
+    "weightGrams": 1336,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0362PR",
+    "name": "VOL FORD NEW ECOSPORT C/ ESFERA - PRETO",
+    "category": "Ford",
+    "weightGrams": 1336,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0364CZ",
+    "name": "VOL FORD NEW KA / NEW ECO S/ ESFERA - CINZA",
+    "category": "Ford",
+    "weightGrams": 1336,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0364PR",
+    "name": "VOL FORD NEW KA / NEW ECO S/ ESFERA - PRETO",
+    "category": "Ford",
+    "weightGrams": 1336,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0361",
+    "name": "VOL FORD FOCUS AB",
+    "category": "Ford",
+    "weightGrams": 1100,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0363",
+    "name": "VOL FORD FOCUS",
+    "category": "Ford",
+    "weightGrams": 1100,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0360",
+    "name": "VOL FORD NOVO FOCUS",
+    "category": "Ford",
+    "weightGrams": 1422,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0365",
+    "name": "VOL FORD KA",
+    "category": "Ford",
+    "weightGrams": 1416,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1240",
+    "name": "VOL FORD NEW ECO (EMBORRACHADO)",
+    "category": "Ford",
+    "weightGrams": 1338,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0367",
+    "name": "VOL FORD PAMPA",
+    "category": "Ford",
+    "weightGrams": 1992,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0368",
+    "name": "VOL FORD DEL REY - MARROM",
+    "category": "Ford",
+    "weightGrams": 1992,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0369",
+    "name": "VOL FORD F-1000",
+    "category": "Ford",
+    "weightGrams": 2470,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0371",
+    "name": "VOL FORD F-250 S/ AB",
+    "category": "Ford",
+    "weightGrams": 2342,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0372",
+    "name": "VOL FORD RANGER COM E SEM AB",
+    "category": "Ford",
+    "weightGrams": 1010,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0551",
+    "name": "VOL HONDA CIVIC",
+    "category": "Honda",
+    "weightGrams": 1040,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1208",
+    "name": "VOL HONDA CIVIC 2015",
+    "category": "Honda",
+    "weightGrams": 1041,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0553",
+    "name": "VOL HONDA CIVIC ANTIGO",
+    "category": "Honda",
+    "weightGrams": 1946,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0555",
+    "name": "VOL HONDA FIT",
+    "category": "Honda",
+    "weightGrams": 1114,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0557",
+    "name": "VOL HONDA NEW CIVIC",
+    "category": "Honda",
+    "weightGrams": 1072,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0559",
+    "name": "VOL HONDA CITY",
+    "category": "Honda",
+    "weightGrams": 1038,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1249",
+    "name": "VOL HONDA CITY 2015 / HRV C/ CONTROLE",
+    "category": "Honda",
+    "weightGrams": 1038,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1252",
+    "name": "VOL HONDA CITY 2015 / HRV S/ CONTROLE",
+    "category": "Honda",
+    "weightGrams": 1038,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1202",
+    "name": "VOL HONDA CRV",
+    "category": "Honda",
+    "weightGrams": 1042,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1251",
+    "name": "VOL HYUNDAI TUCSON - CLARO",
+    "category": "Hyundai",
+    "weightGrams": 1566,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1253CZ",
+    "name": "VOL HYUNDAI TUCSON - ESCURO",
+    "category": "Hyundai",
+    "weightGrams": 1566,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1256BG",
+    "name": "VOL HYUNDAI TUCSON - BEGE",
+    "category": "Hyundai",
+    "weightGrams": 1566,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1254CZ",
+    "name": "VOL HYUNDAY HR",
+    "category": "Hyundai",
+    "weightGrams": 1706,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1279",
+    "name": "VOL HYUNDAY HR NOVA",
+    "category": "Hyundai",
+    "weightGrams": 1721,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1255",
+    "name": "VOL HYUNDAI I30",
+    "category": "Hyundai",
+    "weightGrams": 900,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1256",
+    "name": "VOL HYUNDAI ELANTRA",
+    "category": "Hyundai",
+    "weightGrams": 1222,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1257",
+    "name": "VOL HYUNDAI HB20",
+    "category": "Hyundai",
+    "weightGrams": 1096,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1274",
+    "name": "VOL HYUNDAI HB20 2020 (FERRO)",
+    "category": "Hyundai",
+    "weightGrams": 1096,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1275-HYUNDA",
+    "name": "VOL HYUNDAI HB20 2020 (ALUMÍNIO) (Cód. Planilha: VI1275)",
+    "category": "Hyundai",
+    "weightGrams": 1096,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1199",
+    "name": "VOL HYUNDAI SANTA FÉ",
+    "category": "Hyundai",
+    "weightGrams": 1096,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1213",
+    "name": "VOL HYUNDAI IX35",
+    "category": "Hyundai",
+    "weightGrams": 1092,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1211",
+    "name": "VOL KIA SOUL / PICANTO / CERATO",
+    "category": "Kia",
+    "weightGrams": 1098,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1301",
+    "name": "VOL KIA BONGO",
+    "category": "Kia",
+    "weightGrams": 1566,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1267-IVECO",
+    "name": "VOL IVECO DAILY 2013 (Cód. Planilha: VI1267)",
+    "category": "Iveco",
+    "weightGrams": 1646,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0653",
+    "name": "VOL MB SPRINTER NOVA 311 / 313",
+    "category": "Mercedes-Benz",
+    "weightGrams": 2482,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0655",
+    "name": "VOL MB 1620 GRANDE - PRETO",
+    "category": "Mercedes-Benz",
+    "weightGrams": 2500,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0656",
+    "name": "VOL MB 710 / 1620 PEQUENO - PRETO",
+    "category": "Mercedes-Benz",
+    "weightGrams": 2214,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0655MR",
+    "name": "VOL MB 1620 GRANDE - MARROM",
+    "category": "Mercedes-Benz",
+    "weightGrams": 2500,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0656MR",
+    "name": "VOL MB 710 / 1620 PEQUENO - MARROM",
+    "category": "Mercedes-Benz",
+    "weightGrams": 2214,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0658",
+    "name": "VOL MB 709 ANTIGO PEQUENO - PRETO",
+    "category": "Mercedes-Benz",
+    "weightGrams": 3122,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0658MR",
+    "name": "VOL MB 709 ANTIGO PEQUENO - MARROM",
+    "category": "Mercedes-Benz",
+    "weightGrams": 3122,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0659",
+    "name": "VOL MB ACELLO / 714",
+    "category": "Mercedes-Benz",
+    "weightGrams": 2748,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0660",
+    "name": "VOL MB ATEGO",
+    "category": "Mercedes-Benz",
+    "weightGrams": 3018,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0662",
+    "name": "VOL MB ATEGO NOVO (EURO)",
+    "category": "Mercedes-Benz",
+    "weightGrams": 3018,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1601",
+    "name": "VOL MITSUBICHI L-200",
+    "category": "Mitsubishi",
+    "weightGrams": 1766,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0751",
+    "name": "VOL PEUGEOT 206 COM E SEM AB",
+    "category": "Peugeot",
+    "weightGrams": 1072,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0752",
+    "name": "VOL PEUGEOT 207 COM E SEM AB",
+    "category": "Peugeot",
+    "weightGrams": 1146,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0753",
+    "name": "VOL PEUGEOT 307 COM E SEM AB",
+    "category": "Peugeot",
+    "weightGrams": 964,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1209",
+    "name": "VOL PEUGEOT 208 C/ CONTROLE S/ APLIQUE",
+    "category": "Peugeot",
+    "weightGrams": 1270,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1285",
+    "name": "VOL PEUGEOT 3008 GRIFFE - 2022 EM DIANTE",
+    "category": "Peugeot",
+    "weightGrams": 1285,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0851",
+    "name": "VOL RENAULT CLIO",
+    "category": "Renault",
+    "weightGrams": 1658,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0853",
+    "name": "VOL RENAULT CLIO AB",
+    "category": "Renault",
+    "weightGrams": 1280,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0855",
+    "name": "VOL RENAULT SANDERO",
+    "category": "Renault",
+    "weightGrams": 1838,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1273",
+    "name": "VOL RENAULT SANDERO NOVO/ LOGAN 2020",
+    "category": "Renault",
+    "weightGrams": 1838,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0857",
+    "name": "VOL RENAULT LOGAN AB",
+    "category": "Renault",
+    "weightGrams": 1140,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0858",
+    "name": "VOL RENAULT LOGAN 3 TRAVAS",
+    "category": "Renault",
+    "weightGrams": 1142,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1250",
+    "name": "VOL RENAULT OROCH / LOGAN 3 TRAVAS C/ CONTROLE",
+    "category": "Renault",
+    "weightGrams": 1142,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0859CZ",
+    "name": "VOL RENAULT SCENIC AB - CINZA",
+    "category": "Renault",
+    "weightGrams": 1516,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0859MR",
+    "name": "VOL RENAULT SCENIC AB - MARROM",
+    "category": "Renault",
+    "weightGrams": 1516,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1263",
+    "name": "VOL RENAULT MASTER 2014",
+    "category": "Renault",
+    "weightGrams": 1518,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI0863",
+    "name": "VOL RENAULT MEGANE AB",
+    "category": "Renault",
+    "weightGrams": 1020,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1226",
+    "name": "VOL RENAULT DUSTER S/ APLIQUE (EMBORRACHADO)",
+    "category": "Renault",
+    "weightGrams": 1222,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1227",
+    "name": "VOL RENAULT DUSTER C/ APLIQUE",
+    "category": "Renault",
+    "weightGrams": 1222,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1271",
+    "name": "VOL RENAULT KWID S/ APLIQUE (EMBORRACHADO) - CINZA",
+    "category": "Renault",
+    "weightGrams": 1142,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1282",
+    "name": "VOL RENAULT KWID S/ APLIQUE (EMBORRACHADO) - PRETO",
+    "category": "Renault",
+    "weightGrams": 1142,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1283",
+    "name": "VOL RENAULT KWID C/ 01 APLIQUE",
+    "category": "Renault",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1284",
+    "name": "VOL RENAULT KWID C/ 03 APLIQUE",
+    "category": "Renault",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1196",
+    "name": "VOL NISSAN MARCH / VERSA",
+    "category": "Nissan",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1241",
+    "name": "VOL NISSAN MARCH / VERSA 2015",
+    "category": "Nissan",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1276",
+    "name": "VOL NISSAN VERSA 2020",
+    "category": "Nissan",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1223PT",
+    "name": "VOL NISSAN FRONTIER - PRETO",
+    "category": "Nissan",
+    "weightGrams": 1298,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1223CZ",
+    "name": "VOL NISSAN FRONTIER - CINZA",
+    "category": "Nissan",
+    "weightGrams": 1298,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1223",
+    "name": "VOL NISSAN FRONTIER - CLARO",
+    "category": "Nissan",
+    "weightGrams": 1298,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1237",
+    "name": "VOL NISSAN TIIDA / LIVINA",
+    "category": "Nissan",
+    "weightGrams": 1143,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1051",
+    "name": "VOL TOYOTA COROLLA AB",
+    "category": "Toyota",
+    "weightGrams": 1116,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1053",
+    "name": "VOL TOYOTA COROLLA",
+    "category": "Toyota",
+    "weightGrams": 1518,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1055",
+    "name": "VOL TOYOTA COROLLA ANTIGO AB",
+    "category": "Toyota",
+    "weightGrams": 928,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1056",
+    "name": "VOL TOYOTA COROLLA NOVO AB",
+    "category": "Toyota",
+    "weightGrams": 1208,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1062GR",
+    "name": "VOL TOYOTA COROLLA NOVO AB - GRAFITE",
+    "category": "Toyota",
+    "weightGrams": 1208,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1057",
+    "name": "VOL TOYOTA COROLLA NOVO C/ BORBOLETA",
+    "category": "Toyota",
+    "weightGrams": 1208,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1063GR",
+    "name": "VOL TOYOTA COROLLA NOVO C/ BORBOLETA - GRAFITE",
+    "category": "Toyota",
+    "weightGrams": 1208,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1281",
+    "name": "VOL TOYOTA COROLLA 2020",
+    "category": "Toyota",
+    "weightGrams": 1208,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1059CZ",
+    "name": "VOL TOYOTA HILUX AB - CINZA",
+    "category": "Toyota",
+    "weightGrams": 1262,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1059BG",
+    "name": "VOL TOYOTA HILUX AB - BEGE",
+    "category": "Toyota",
+    "weightGrams": 1262,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1060CZ",
+    "name": "VOL TOYOTA NOVA HILUX AB COURO - CINZA",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1060BG",
+    "name": "VOL TOYOTA NOVA HILUX AB COURO - BEGE",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1061CZ",
+    "name": "VOL TOYOTA HILUX 2014 AB - CINZA",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1217GR",
+    "name": "VOL TOYOTA HILUX 2014 AB - GRAFITE",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1218PT",
+    "name": "VOL TOYOTA HILUX 2014 AB - PRETO",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1231CZ",
+    "name": "VOL TOYOTA HILUX 2015 AB EM PU - CINZA",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1231GR",
+    "name": "VOL TOYOTA HILUX 2015 AB EM PU - GRAFITE",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1231PT",
+    "name": "VOL TOYOTA HILUX 2015 AB EM PU - PRETO",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1280",
+    "name": "VOL TOYOTA HILUX 2020",
+    "category": "Toyota",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1239",
+    "name": "VOL TOYOTA ETIOS",
+    "category": "Toyota",
+    "weightGrams": 1128,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1243",
+    "name": "VOL TOYOTA ETIOS NOVO 2015",
+    "category": "Toyota",
+    "weightGrams": 1128,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1151",
+    "name": "VOL VW DELIVERY",
+    "category": "Volkswagen",
+    "weightGrams": 2650,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1153",
+    "name": "VOL VW CONSTELATION",
+    "category": "Volkswagen",
+    "weightGrams": 2804,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1192",
+    "name": "VOL VW FOX AB 3 TRAVAS C/ CONTROLE - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1266,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1215",
+    "name": "VOL VW FOX AB 3 TRAVAS C/ CONTROLE - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1266,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1193",
+    "name": "VOL VW FOX AB 3 TRAVAS S/ CONTROLE - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1266,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1216",
+    "name": "VOL VW FOX AB 3 TRAVAS S/ CONTROLE - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1266,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1204",
+    "name": "VOL VW FOX C/ CONTROLE S/ AB - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1266,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1194",
+    "name": "VOL VW FOX AB 2 TRAVAS C/ CONTROLE - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1142,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1222",
+    "name": "VOL VW FOX AB 2 TRAVAS C/ CONTROLE - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1142,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1195",
+    "name": "VOL VW FOX AB 2 TRAVAS S/ CONTROLE - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1112,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1220",
+    "name": "VOL VW FOX AB 2 TRAVAS S/ CONTROLE - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1112,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1232",
+    "name": "VOL VW UP",
+    "category": "Volkswagen",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1233",
+    "name": "VOL VW UP C/ CONTROLE S/ APLIQUE",
+    "category": "Volkswagen",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1234",
+    "name": "VOL VW UP C/ CONTROLE C/ APLIQUE",
+    "category": "Volkswagen",
+    "weightGrams": 1254,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1155",
+    "name": "VOL VW FOX",
+    "category": "Volkswagen",
+    "weightGrams": 2172,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1156",
+    "name": "VOL VW VOYAGE",
+    "category": "Volkswagen",
+    "weightGrams": 2094,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1157",
+    "name": "VOL VW GOL G2 BOLEADO",
+    "category": "Volkswagen",
+    "weightGrams": 2072,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1159",
+    "name": "VOL VW GOL G2 CHAPEU",
+    "category": "Volkswagen",
+    "weightGrams": 1742,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1161",
+    "name": "VOL VW GOL G2 BOLINHA",
+    "category": "Volkswagen",
+    "weightGrams": 1890,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1163",
+    "name": "VOL VW GOL G2 SPECIAL",
+    "category": "Volkswagen",
+    "weightGrams": 1560,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1165",
+    "name": "VOL VW GOL G3 PEQUENO",
+    "category": "Volkswagen",
+    "weightGrams": 1654,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1173",
+    "name": "VOL VW GOL G3 POWER",
+    "category": "Volkswagen",
+    "weightGrams": 1952,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1169",
+    "name": "VOL VW GOL G4",
+    "category": "Volkswagen",
+    "weightGrams": 2150,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1171",
+    "name": "VOL VW GOL G5",
+    "category": "Volkswagen",
+    "weightGrams": 2052,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1172",
+    "name": "VOL VW GOL G6 AB 2 TRAVAS - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1322,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1221",
+    "name": "VOL VW GOL G6 AB 2 TRAVAS - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1322,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1174",
+    "name": "VOL VW GOL G6 AB 3 TRAVAS - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1196,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1219",
+    "name": "VOL VW GOL G6 AB 3 TRAVAS - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1196,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1176",
+    "name": "VOL VW AMAROK G6 - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1300,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1176CZ",
+    "name": "VOL VW AMAROK G6 - CINZA",
+    "category": "Volkswagen",
+    "weightGrams": 1300,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1238",
+    "name": "VOL VW GOLF/ FOX TSI / AMAROK S/ CONTROLE",
+    "category": "Volkswagen",
+    "weightGrams": 1298,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1235",
+    "name": "VOL VW GOL G7 S/ CONTROLE",
+    "category": "Volkswagen",
+    "weightGrams": 1298,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1258",
+    "name": "VOL VW GOL G7 C/ CONTROLE",
+    "category": "Volkswagen",
+    "weightGrams": 1298,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1177",
+    "name": "VOL VW POLO",
+    "category": "Volkswagen",
+    "weightGrams": 1740,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1179",
+    "name": "VOL VW GOLF AB S/ ESFERA",
+    "category": "Volkswagen",
+    "weightGrams": 1106,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1189",
+    "name": "VOL VW GOLF AB C/ ESFERA",
+    "category": "Volkswagen",
+    "weightGrams": 1106,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1180",
+    "name": "VOL VW BORA",
+    "category": "Volkswagen",
+    "weightGrams": 1726,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1181",
+    "name": "VOL VW KOMBI",
+    "category": "Volkswagen",
+    "weightGrams": 2558,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1183",
+    "name": "VOL VW SANTANA 2000 / QUANTUM 2000",
+    "category": "Volkswagen",
+    "weightGrams": 2060,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1184",
+    "name": "VOL VW SANTANA 4 BOLAS - PRETO",
+    "category": "Volkswagen",
+    "weightGrams": 1850,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1186",
+    "name": "VOL VW SANTANA 4 BOLAS - MARROM",
+    "category": "Volkswagen",
+    "weightGrams": 1850,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1185",
+    "name": "VOL VW PARATI SURF",
+    "category": "Volkswagen",
+    "weightGrams": 2010,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1187",
+    "name": "VOL VW VOYAGE AB",
+    "category": "Volkswagen",
+    "weightGrams": 1162,
+    "supplier": "Garfer",
+    "unit": "un"
+  },
+  {
+    "sku": "VI1191",
+    "name": "VOL VW GOL RALLYE ORIGINAL",
+    "category": "Volkswagen",
+    "weightGrams": 2010,
+    "supplier": "Garfer",
+    "unit": "un"
+  }
+]

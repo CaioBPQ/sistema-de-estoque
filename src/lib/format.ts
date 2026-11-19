@@ -28,6 +28,17 @@ export function formatQuantity(value: number, unit?: string): string {
   return unit ? `${formatted} ${unit}` : formatted;
 }
 
+export function formatWeight(grams: number | null | undefined): string {
+  if (grams === null || grams === undefined || !Number.isFinite(grams)) {
+    return "—";
+  }
+  const formatted = new Intl.NumberFormat("pt-BR", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(grams);
+  return `${formatted} g`;
+}
+
 const FORMULA_PREFIX_RE = /^[=+\-@\t\r]/;
 
 /**

@@ -13,7 +13,25 @@ interface ProductFormModalProps {
   onSuccess: (message: string) => void;
 }
 
-const DEFAULT_UNITS = ["un", "cx", "par", "pct", "kg", "L", "m", "rolo"];
+const DEFAULT_UNITS = ["un", "par", "cx", "pct", "kg"];
+
+const DEFAULT_AUTOMAKERS = [
+  "Chevrolet",
+  "Citroën",
+  "Fiat",
+  "Ford",
+  "Honda",
+  "Hyundai",
+  "Iveco",
+  "Kia",
+  "Mercedes-Benz",
+  "Mitsubishi",
+  "Nissan",
+  "Peugeot",
+  "Renault",
+  "Toyota",
+  "Volkswagen",
+];
 
 export function ProductFormModal({
   open,
@@ -27,9 +45,10 @@ export function ProductFormModal({
   const [sku, setSku] = useState("");
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
+  const [weightGrams, setWeightGrams] = useState("");
   const [unit, setUnit] = useState("un");
-  const [supplier, setSupplier] = useState("");
-  const [minStock, setMinStock] = useState("5");
+  const [supplier, setSupplier] = useState("Garfer");
+  const [minStock, setMinStock] = useState("2");
   const [currentStock, setCurrentStock] = useState("0");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,17 +60,19 @@ export function ProductFormModal({
       setSku(product.sku);
       setName(product.name);
       setCategory(product.category);
+      setWeightGrams(product.weightGrams !== null ? String(product.weightGrams) : "");
       setUnit(product.unit);
-      setSupplier(product.supplier ?? "");
+      setSupplier(product.supplier ?? "Garfer");
       setMinStock(String(product.minStock));
       setCurrentStock(String(product.currentStock));
     } else {
       setSku("");
       setName("");
-      setCategory(categories[0] ?? "Geral");
+      setCategory(categories[0] ?? "Volkswagen");
+      setWeightGrams("");
       setUnit("un");
-      setSupplier("");
-      setMinStock("5");
+      setSupplier("Garfer");
+      setMinStock("2");
       setCurrentStock("0");
     }
   }, [open, product, categories]);
@@ -67,10 +88,14 @@ export function ProductFormModal({
       const endpoint = isEditing ? `/api/products/${product!.id}` : "/api/products";
       const method = isEditing ? "PATCH" : "POST";
 
+      const trimmedWeight = weightGrams.trim().replace(",", ".");
+      const parsedWeight = trimmedWeight.length > 0 ? Number(trimmedWeight) : null;
+
       const payload: Record<string, unknown> = {
         sku: sku.trim(),
         name: name.trim(),
         category: category.trim(),
+        weightGrams: parsedWeight,
         unit: unit.trim() || "un",
         supplier: supplier.trim() || null,
         minStock: Number(minStock.replace(",", ".")),
@@ -88,33 +113,23 @@ export function ProductFormModal({
 
       const json = (await res.json()) as { product?: ProductDTO; error?: string };
       if (!res.ok) {
-        throw new Error(json.error ?? "Erro ao salvar produto.");
+        throw new Error(json.error ?? "Erro ao salvar volante.");
       }
 
       onSuccess(
         isEditing
-          ? `Produto ${json.product?.name ?? name} atualizado.`
-          : `Produto ${json.product?.name ?? name} cadastrado no catálogo.`
+          ? `Volante ${json.product?.name ?? name} atualizado.`
+          : `Volante ${json.product?.name ?? name} cadastrado no catálogo.`
       );
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao salvar produto.");
+      setError(err instanceof Error ? err.message : "Erro ao salvar volante.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const categorySuggestions = Array.from(
-    new Set([
-      "EPIs",
-      "Ferramentas",
-      "Elétrica",
-      "Fixação",
-      "Limpeza Técnica",
-      "Escritório",
-      ...categories,
-    ])
-  );
+  const categorySuggestions = Array.from(new Set([...DEFAULT_AUTOMAKERS, ...categories]));
 
   return (
     <div
@@ -126,7 +141,7 @@ export function ProductFormModal({
       <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <h2 id="product-form-title" className="text-lg font-bold text-slate-900">
-            {isEditing ? "Editar Produto" : "Novo Produto no Catálogo"}
+            {isEditing ? "Editar Volante" : "Novo Volante no Catálogo"}
           </h2>
           <button
             type="button"
@@ -149,36 +164,36 @@ export function ProductFormModal({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                SKU / Código *
+                Código / SKU *
               </label>
               <input
                 type="text"
                 required
                 value={sku}
                 onChange={(e) => setSku(e.target.value)}
-                placeholder="EX: EPI-001"
+                placeholder="EX: VI0487"
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 font-mono text-sm uppercase text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
             <div className="sm:col-span-2">
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                Nome do Produto *
+                Descrição do Volante *
               </label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Ex: Luva Nitrílica Tamanho G"
+                placeholder="Ex: VOL CHEVROLET AGILE AB"
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="sm:col-span-2">
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                Categoria *
+                Montadora *
               </label>
               <input
                 type="text"
@@ -186,7 +201,7 @@ export function ProductFormModal({
                 list="category-suggestions"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                placeholder="Ex: EPIs"
+                placeholder="Ex: Chevrolet, Fiat, Volkswagen"
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
               <datalist id="category-suggestions">
@@ -196,6 +211,23 @@ export function ProductFormModal({
               </datalist>
             </div>
 
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                Peso (gramas)
+              </label>
+              <input
+                type="number"
+                step="any"
+                min="0"
+                value={weightGrams}
+                onChange={(e) => setWeightGrams(e.target.value)}
+                placeholder="Ex: 1346"
+                className="tabular-nums w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
                 Unidade *
@@ -214,24 +246,22 @@ export function ProductFormModal({
                     {u}
                   </option>
                 ))}
-                {!DEFAULT_UNITS.includes(unit) && (
-                  <option value="__custom__">{unit}</option>
-                )}
+                {!DEFAULT_UNITS.includes(unit) && <option value="__custom__">{unit}</option>}
               </select>
             </div>
-          </div>
 
-          <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Fornecedor Principal
-            </label>
-            <input
-              type="text"
-              value={supplier}
-              onChange={(e) => setSupplier(e.target.value)}
-              placeholder="Opcional"
-              className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-            />
+            <div className="sm:col-span-2">
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
+                Fornecedor Principal
+              </label>
+              <input
+                type="text"
+                value={supplier}
+                onChange={(e) => setSupplier(e.target.value)}
+                placeholder="Ex: Garfer"
+                className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -294,7 +324,7 @@ export function ProductFormModal({
               className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
             >
               <CheckCircle2 className="h-4 w-4" />
-              {submitting ? "Salvando..." : isEditing ? "Salvar Alterações" : "Cadastrar Produto"}
+              {submitting ? "Salvando..." : isEditing ? "Salvar Alterações" : "Cadastrar Volante"}
             </button>
           </div>
         </form>

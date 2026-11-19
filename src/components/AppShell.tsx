@@ -53,7 +53,7 @@ export function useInventoryUI(): InventoryUIContextValue {
 }
 
 const NAV_ITEMS = [
-  { href: "/", label: "Catálogo & Saldo", icon: Package },
+  { href: "/", label: "Catálogo de Volantes", icon: Package },
   { href: "/entradas", label: "Entradas & Pedidos", icon: ArrowDownToLine },
   { href: "/movimentacoes", label: "Log de Auditoria", icon: History },
   { href: "/importacao", label: "Importar Excel", icon: FileSpreadsheet },
@@ -157,7 +157,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     StockFlow
                   </span>
                   <span className="block text-[11px] font-medium text-slate-500">
-                    Controle de Estoque
+                    Estoque de Volantes
                   </span>
                 </div>
               </Link>

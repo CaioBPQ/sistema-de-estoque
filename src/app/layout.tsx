@@ -3,9 +3,9 @@ import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  title: "StockFlow — Controle de Estoque e Auditoria",
+  title: "StockFlow — Controle de Estoque de Volantes",
   description:
-    "Sistema web para controle de estoque, entradas, retiradas rápidas com rastreabilidade e importação de planilhas Excel.",
+    "Sistema web exclusivo para controle de estoque de volantes, entradas, retiradas rápidas com rastreabilidade e importação Excel.",
 };
 
 export default function RootLayout({
