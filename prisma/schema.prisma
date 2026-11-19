@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id           String          @id @default(cuid())
+  sku          String          @unique
+  name         String
+  category     String
+  unit         String          @default("un")
+  supplier     String?
+  minStock     Float           @default(0)
+  currentStock Float           @default(0)
+  active       Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  movements    StockMovement[]
+
+  @@index([name])
+  @@index([category])
+  @@index([active])
+}
+
+model Collaborator {
+  id         String          @id @default(cuid())
+  name       String
+  department String?
+  badgeCode  String?         @unique
+  active     Boolean         @default(true)
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  entries    PurchaseEntry[]
+  movements  StockMovement[]
+
+  @@index([name])
+  @@index([active])
+}
+
+model PurchaseEntry {
+  id            String          @id @default(cuid())
+  supplier      String
+  referenceCode String?
+  notes         String?
+  receivedAt    DateTime        @default(now())
+  responsibleId String
+  responsible   Collaborator    @relation(fields: [responsibleId], references: [id])
+  items         StockMovement[]
+  createdAt     DateTime        @default(now())
+
+  @@index([receivedAt])
+  @@index([supplier])
+  @@index([responsibleId])
+}
+
+model StockMovement {
+  id              String         @id @default(cuid())
+  type            String         // "ENTRY" | "EXIT" | "IMPORT"
+  quantity        Float
+  previousStock   Float
+  newStock        Float
+  reason          String?
+  productId       String
+  product         Product        @relation(fields: [productId], references: [id])
+  collaboratorId  String?
+  collaborator    Collaborator?  @relation(fields: [collaboratorId], references: [id])
+  purchaseEntryId String?
+  purchaseEntry   PurchaseEntry? @relation(fields: [purchaseEntryId], references: [id])
+  createdAt       DateTime       @default(now())
+
+  @@index([productId])
+  @@index([collaboratorId])
+  @@index([purchaseEntryId])
+  @@index([type])
+  @@index([createdAt])
+}

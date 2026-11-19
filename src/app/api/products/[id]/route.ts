@@ -1,0 +1,46 @@
+import { NextRequest, NextResponse } from "next/server";
+import { apiErrorResponse } from "@/app/api/_lib/error-response";
+import {
+  archiveProduct,
+  getProductById,
+  updateProduct,
+} from "@/lib/services/inventory-service";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: { id: string } }
+): Promise<NextResponse> {
+  try {
+    const product = await getProductById(params.id);
+    return NextResponse.json({ product });
+  } catch (err) {
+    return apiErrorResponse(err);
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+): Promise<NextResponse> {
+  try {
+    const body = await request.json();
+    const product = await updateProduct(params.id, body);
+    return NextResponse.json({ product });
+  } catch (err) {
+    return apiErrorResponse(err);
+  }
+}
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: { id: string } }
+): Promise<NextResponse> {
+  try {
+    const product = await archiveProduct(params.id);
+    return NextResponse.json({ product });
+  } catch (err) {
+    return apiErrorResponse(err);
+  }
+}
