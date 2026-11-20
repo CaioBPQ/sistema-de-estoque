@@ -127,6 +127,38 @@
   - **Agente responsável:** Gemini 4 Hydrogen
   - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
 
+### Fase 3 — Regras de Negócio: Importação em Lote no Pedido, Perfis/Devoluções e Assistente IA
+
+- [x] **Tarefa 10 (Schema `ProductCustody` + `Collaborator.role`, Seed Nominal & Serviços de Devolução/Posse):**
+  - **O que fazer:** Adicionar `role` (`"MANAGER" | "EMPLOYEE"`) em `Collaborator` e modelo `ProductCustody` (`productId`, `collaboratorId`, `quantity`) no `prisma/schema.prisma`. Atualizar `prisma/seed.ts` com o gestor **Luiz** (`MANAGER`) e os funcionários **Mauro**, **Jean**, **Guilherme** e **Carlinho** (`EMPLOYEE`). Atualizar `src/types/inventory.ts` e `src/lib/validators.ts` (`returnCreateSchema`, `MovementType` incluindo `"RETURN"`, DTOs de posse, relatórios gerenciais, importação em pedido e chat IA). Em `inventory-service.ts`, atualizar `registerWithdrawal` para incrementar `ProductCustody` atomicamente, criar `registerReturn` (decrementando `ProductCustody` atomicamente e incrementando `Product.currentStock` com `StockMovement.type = "RETURN"`), `listCustodies`, `getManagerReport`, e `exportMovementsCsv` incluindo `"Devolução"`.
+  - **Arquivos exclusivos:** `prisma/schema.prisma`, `prisma/seed.ts`, `src/types/inventory.ts`, `src/lib/validators.ts`, `src/lib/services/collaborator-service.ts`, `src/lib/services/inventory-service.ts`
+  - **Agente responsável:** Claude Sonnet 5.5 / Gemini 4 Hydrogen
+  - **Validação:** `npm run db:reset && npm run typecheck`
+
+- [x] **Tarefa 11 (Importação em Lote de Pedidos, Assistente Virtual IA & Rotas API com RBAC):**
+  - **O que fazer:**
+    1. Em `src/lib/services/import-service.ts`, adicionar `parseEntryOrderPreview` (mapeando `Modelo do Volante / Código` e `Quantidade` — incluindo suporte a coluna `PED`/`SUB`/`QTD` e resolução por SKU ou descrição — retornando itens validados + linhas não casadas para conferência antes da confirmação do pedido).
+    2. Criar `src/lib/services/ai-assistant-service.ts` (`queryInventoryAssistant`) cruzando `Product.currentStock` e `ProductCustody` para classificar com exatidão cada modelo consultado em **Disponível** (unidades livres), **Em uso** (em posse de Mauro, Jean, Guilherme, Carlinho ou Luiz) ou **Indisponível** (sem saldo e sem posse na equipe), além de consultas gerais de posse por funcionário.
+    3. Criar `src/app/api/_lib/actor-auth.ts` e atualizar as rotas API (`products`, `entries`, `entries/import`, `withdrawals`, `returns`, `custodies`, `reports`, `import`, `collaborators`, `ai/chat`) aplicando RBAC (`Luiz` acesso completo; `Mauro/Jean/Guilherme/Carlinho` livres para retiradas e devoluções vinculadas ao próprio nome).
+  - **Arquivos exclusivos:** `src/lib/services/import-service.ts`, `src/lib/services/ai-assistant-service.ts`, `src/app/api/_lib/actor-auth.ts`, `src/app/api/products/route.ts`, `src/app/api/products/[id]/route.ts`, `src/app/api/collaborators/route.ts`, `src/app/api/collaborators/[id]/route.ts`, `src/app/api/entries/route.ts`, `src/app/api/entries/import/route.ts`, `src/app/api/withdrawals/route.ts`, `src/app/api/returns/route.ts`, `src/app/api/custodies/route.ts`, `src/app/api/reports/route.ts`, `src/app/api/import/route.ts`, `src/app/api/ai/chat/route.ts`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run typecheck && npm run lint`
+
+- [x] **Tarefa 12 (UI: Seletor de Perfil, Devoluções, Importação no Pedido, Relatórios do Gestor e Chat IA):**
+  - **O que fazer:**
+    1. Atualizar `AppShell.tsx` com seletor de usuário ativo (**Luiz [Gestor]** e **Mauro/Jean/Guilherme/Carlinho [Funcionário]**), sincronizando header/cookie `stockflow-actor-id`, filtrando menus por permissão e adicionando atalho de **Devolução** + **AIAssistantWidget** exclusivo para o gestor (`Luiz`).
+    2. Criar `QuickReturnModal.tsx` (listando os volantes atualmente em posse do colaborador selecionado/ativo, permitindo devolução parcial ou total) e `AIAssistantWidget.tsx` (chat flutuante do gestor com chips rápidos e cards de status `Disponível` / `Em uso` / `Indisponível`).
+    3. Atualizar `QuickWithdrawalModal.tsx` (vinculando automaticamente ao funcionário ativo quando `EMPLOYEE`), `QuickEntryModal.tsx` (adicionando botão **Importar Excel** com mapeamento de `Modelo/Código` + `Quantidade` preenchendo a lista do pedido antes da confirmação), `StatusBadge.tsx` (badge `Devolução`), `CatalogDashboard.tsx` (seção "Em posse / Em uso" + ações por perfil), `EntriesHistoryView.tsx`, `AuditTimelineView.tsx` (painel de relatórios gerais e movimentações/posse por funcionário para o gestor + filtro `Devolução`) e `CollaboratorsView.tsx` (exibição/edição de perfil `Gestor` vs `Funcionário`).
+  - **Arquivos exclusivos:** `src/components/AppShell.tsx`, `src/components/StatusBadge.tsx`, `src/components/QuickWithdrawalModal.tsx`, `src/components/QuickReturnModal.tsx`, `src/components/QuickEntryModal.tsx`, `src/components/AIAssistantWidget.tsx`, `src/components/CatalogDashboard.tsx`, `src/components/EntriesHistoryView.tsx`, `src/components/AuditTimelineView.tsx`, `src/components/CollaboratorsView.tsx`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run typecheck && npm run lint && npm run build`
+
+- [x] **Tarefa 13 (Testes das Novas Regras de Negócio: Devoluções, RBAC, Importação no Pedido e IA):**
+  - **O que fazer:** Expandir `tests/inventory-transactions.test.ts`, `tests/audit-and-import.test.ts` e criar `tests/roles-and-ai.test.ts` cobrindo: retiradas + devoluções parciais/totais e bloqueio de devolução acima da posse, importação em lote de pedido (`parseEntryOrderPreview` por código e por modelo), cruzamento do Assistente IA (`Disponível`, `Em uso` com funcionário ou Luiz, `Indisponível`) e validação de permissões HTTP (`EMPLOYEE` bloqueado em rotas administrativas e vinculado ao próprio nome vs `MANAGER` com acesso total). Validar `typecheck`, `lint`, `test` e `build`.
+  - **Arquivos exclusivos:** `tests/db-helper.ts`, `tests/inventory-transactions.test.ts`, `tests/audit-and-import.test.ts`, `tests/roles-and-ai.test.ts`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
+
 ---
 
 ## 4. Parecer do Conselho dos Anciões (Preenchido por: Claude Opus 5.5 High — `@4-conselho.md`)
@@ -135,4 +167,4 @@
   - Nenhum pendente. Durante a auditoria e testes de concorrência, foi identificado e corrigido um deadlock de upgrade de leitura para escrita no SQLite sob múltiplas retiradas simultâneas (`runWithSqliteWriteLock` + validação prévia do colaborador antes de abrir `$transaction`), além de ajuste de fuso horário local no filtro por data e remoção de fetch externo do `next/font/google` no build.
 - **Sugestões Opcionais de Melhoria:**
   - Para uso em produção multi-instância no futuro, migrar o `datasource` do Prisma de SQLite para PostgreSQL mantendo os mesmos serviços e contratos.
-- **Veredito Final:** `APROVADO PARA COMMIT` (Fase 1 e Fase 2 — Estoque de Volantes Garfer validadas com 8/8 testes passando)
+- **Veredito Final:** `APROVADO PARA COMMIT` (Fases 1, 2 e 3 validadas com 12/12 testes passando, RBAC ativo, devoluções rastreadas por posse, importação em lote no pedido e Assistente IA)

@@ -8,8 +8,10 @@ import {
 import {
   createProduct,
   getProductById,
+  listCustodies,
   listPurchaseEntries,
   registerPurchaseEntry,
+  registerReturn,
   registerWithdrawal,
 } from "@/lib/services/inventory-service";
 import { initTestDb, resetTestDb } from "./db-helper";
@@ -181,5 +183,60 @@ describe("Transações de Estoque, Entradas e Retiradas", () => {
       orderBy: { createdAt: "asc" },
     });
     expect(exitMovements).toHaveLength(2);
+  });
+
+  it("rastreia posse em retirada, permite devolução parcial/total e bloqueia devolução acima da posse", async () => {
+    const mauro = await createCollaborator({ name: "Mauro", role: "EMPLOYEE" });
+    const p = await createProduct({
+      sku: "VI0487",
+      name: "VOL CHEVROLET AGILE",
+      category: "Chevrolet",
+      unit: "un",
+      minStock: 2,
+      currentStock: 5,
+    });
+
+    await registerWithdrawal({
+      productId: p.id,
+      quantity: 3,
+      collaboratorId: mauro.id,
+      reason: "Teste bancada",
+    });
+
+    let custodies = await listCustodies({ collaboratorId: mauro.id });
+    expect(custodies).toHaveLength(1);
+    expect(custodies[0].quantity).toBe(3);
+
+    const partialReturn = await registerReturn({
+      productId: p.id,
+      quantity: 2,
+      collaboratorId: mauro.id,
+      reason: "Devolução parcial",
+    });
+
+    expect(partialReturn.type).toBe("RETURN");
+    expect(partialReturn.previousStock).toBe(2);
+    expect(partialReturn.newStock).toBe(4);
+
+    // Trying to return 2 when Mauro only holds 1 must fail
+    await expect(
+      registerReturn({
+        productId: p.id,
+        quantity: 2,
+        collaboratorId: mauro.id,
+      })
+    ).rejects.toThrow(ConflictError);
+
+    // Returning remaining 1 restores stock to 5 and clears custody
+    await registerReturn({
+      productId: p.id,
+      quantity: 1,
+      collaboratorId: mauro.id,
+    });
+
+    const finalProduct = await getProductById(p.id);
+    expect(finalProduct.currentStock).toBe(5);
+    custodies = await listCustodies({ collaboratorId: mauro.id });
+    expect(custodies).toHaveLength(0);
   });
 });

@@ -13,18 +13,23 @@ import {
   productCreateSchema,
   productUpdateSchema,
   purchaseEntryCreateSchema,
+  returnCreateSchema,
   roundQuantity,
   withdrawalCreateSchema,
 } from "@/lib/validators";
 import type {
   DashboardSummary,
+  EmployeeReportItemDTO,
+  ManagerReportDTO,
   MovementType,
   MovementsListResponse,
+  ProductCustodyDTO,
   ProductDTO,
   ProductStatusFilter,
   ProductsListResponse,
   PurchaseEntryDTO,
   StockMovementDTO,
+  UserRole,
 } from "@/types/inventory";
 
 function normalizeText(value: string): string {
@@ -507,6 +512,33 @@ export async function registerWithdrawal(input: unknown): Promise<StockMovementD
           });
         }
 
+        const existingCustody = await tx.productCustody.findUnique({
+          where: {
+            productId_collaboratorId: {
+              productId: afterProduct.id,
+              collaboratorId: collaborator.id,
+            },
+          },
+        });
+        const nextCustody = roundQuantity((existingCustody?.quantity ?? 0) + data.quantity);
+
+        await tx.productCustody.upsert({
+          where: {
+            productId_collaboratorId: {
+              productId: afterProduct.id,
+              collaboratorId: collaborator.id,
+            },
+          },
+          create: {
+            productId: afterProduct.id,
+            collaboratorId: collaborator.id,
+            quantity: nextCustody,
+          },
+          update: {
+            quantity: nextCustody,
+          },
+        });
+
         const movement = await tx.stockMovement.create({
           data: {
             type: "EXIT",
@@ -529,6 +561,150 @@ export async function registerWithdrawal(input: unknown): Promise<StockMovementD
       { maxWait: 10000, timeout: 15000 }
     )
   );
+}
+
+export async function registerReturn(input: unknown): Promise<StockMovementDTO> {
+  await ensureSqliteReady();
+  const parsed = returnCreateSchema.safeParse(input);
+  if (!parsed.success) {
+    throw new ValidationError(parsed.error.issues[0]?.message ?? "Dados da devolução inválidos");
+  }
+
+  const data = parsed.data;
+
+  const collaborator = await prisma.collaborator.findUnique({
+    where: { id: data.collaboratorId },
+  });
+  if (!collaborator) {
+    throw new NotFoundError("Usuário informado não foi encontrado.");
+  }
+  if (!collaborator.active) {
+    throw new ConflictError("Usuário inativo não pode registrar devoluções.");
+  }
+
+  return withSqliteRetry(() =>
+    prisma.$transaction(
+      async (tx) => {
+        const custodyUpdate = await tx.productCustody.updateMany({
+          where: {
+            productId: data.productId,
+            collaboratorId: collaborator.id,
+            quantity: { gte: data.quantity },
+          },
+          data: {
+            quantity: { decrement: data.quantity },
+          },
+        });
+
+        if (custodyUpdate.count === 0) {
+          const [product, custody] = await Promise.all([
+            tx.product.findUnique({ where: { id: data.productId } }),
+            tx.productCustody.findUnique({
+              where: {
+                productId_collaboratorId: {
+                  productId: data.productId,
+                  collaboratorId: collaborator.id,
+                },
+              },
+            }),
+          ]);
+          if (!product) {
+            throw new NotFoundError("Volante não encontrado.");
+          }
+          const held = roundQuantity(custody?.quantity ?? 0);
+          throw new ConflictError(
+            `${collaborator.name} possui ${held} ${product.unit} em uso de ${product.name}; não é possível devolver ${data.quantity} ${product.unit}.`
+          );
+        }
+
+        const updatedCustody = await tx.productCustody.findUnique({
+          where: {
+            productId_collaboratorId: {
+              productId: data.productId,
+              collaboratorId: collaborator.id,
+            },
+          },
+        });
+        if (updatedCustody) {
+          const roundedCustody = roundQuantity(updatedCustody.quantity);
+          if (roundedCustody !== updatedCustody.quantity) {
+            await tx.productCustody.update({
+              where: { id: updatedCustody.id },
+              data: { quantity: roundedCustody },
+            });
+          }
+        }
+
+        const updatedProduct = await tx.product.update({
+          where: { id: data.productId },
+          data: { currentStock: { increment: data.quantity } },
+        });
+
+        const newStock = roundQuantity(updatedProduct.currentStock);
+        const previousStock = roundQuantity(newStock - data.quantity);
+
+        if (newStock !== updatedProduct.currentStock) {
+          await tx.product.update({
+            where: { id: data.productId },
+            data: { currentStock: newStock },
+          });
+        }
+
+        const movement = await tx.stockMovement.create({
+          data: {
+            type: "RETURN",
+            quantity: data.quantity,
+            previousStock,
+            newStock,
+            reason: data.reason ?? "Devolução ao estoque",
+            productId: updatedProduct.id,
+            collaboratorId: collaborator.id,
+          },
+          include: {
+            product: { select: { sku: true, name: true, unit: true } },
+            collaborator: { select: { name: true, department: true } },
+            purchaseEntry: { select: { referenceCode: true, supplier: true } },
+          },
+        });
+
+        return toMovementDTO(movement);
+      },
+      { maxWait: 10000, timeout: 15000 }
+    )
+  );
+}
+
+export async function listCustodies(filters?: {
+  collaboratorId?: string;
+  productId?: string;
+}): Promise<ProductCustodyDTO[]> {
+  await ensureSqliteReady();
+  const rows = await prisma.productCustody.findMany({
+    where: {
+      quantity: { gt: 0 },
+      ...(filters?.collaboratorId ? { collaboratorId: filters.collaboratorId } : {}),
+      ...(filters?.productId ? { productId: filters.productId } : {}),
+    },
+    orderBy: [{ updatedAt: "desc" }],
+    include: {
+      product: { select: { sku: true, name: true, category: true, unit: true } },
+      collaborator: { select: { name: true, role: true } },
+    },
+  });
+
+  return rows.map((row) => ({
+    id: row.id,
+    productId: row.productId,
+    productSku: row.product.sku,
+    productName: row.product.name,
+    productCategory: row.product.category,
+    productUnit: row.product.unit,
+    collaboratorId: row.collaboratorId,
+    collaboratorName: row.collaborator.name,
+    collaboratorRole: (row.collaborator.role === "MANAGER" ? "MANAGER" : "EMPLOYEE") as UserRole,
+    quantity: roundQuantity(row.quantity),
+    updatedAt: row.updatedAt.toISOString(),
+  }));
 }
 
 export async function listPurchaseEntries(limit = 50): Promise<PurchaseEntryDTO[]> {
@@ -574,7 +750,7 @@ export async function listPurchaseEntries(limit = 50): Promise<PurchaseEntryDTO[
 function buildMovementWhere(filter: {
   productId?: string;
   collaboratorId?: string;
-  type: "ALL" | "ENTRY" | "EXIT" | "IMPORT";
+  type: "ALL" | "ENTRY" | "EXIT" | "RETURN" | "IMPORT";
   startDate?: string;
   endDate?: string;
 }): Prisma.StockMovementWhereInput {
@@ -674,6 +850,7 @@ export async function exportMovementsCsv(rawFilter: unknown): Promise<string> {
   const typeLabel: Record<MovementType, string> = {
     ENTRY: "Entrada",
     EXIT: "Saída",
+    RETURN: "Devolução",
     IMPORT: "Importação",
   };
 
@@ -706,4 +883,131 @@ export async function exportMovementsCsv(rawFilter: unknown): Promise<string> {
   );
 
   return `\uFEFF${[header, ...lines].join("\r\n")}`;
+}
+
+export async function getManagerReport(filters?: {
+  startDate?: string;
+  endDate?: string;
+}): Promise<ManagerReportDTO> {
+  await ensureSqliteReady();
+
+  const movementWhere = buildMovementWhere({
+    type: "ALL",
+    startDate: filters?.startDate,
+    endDate: filters?.endDate,
+  });
+
+  const [collaborators, movements, activeCustodies, products] = await Promise.all([
+    prisma.collaborator.findMany({
+      where: { active: true },
+      orderBy: [{ role: "desc" }, { name: "asc" }],
+    }),
+    prisma.stockMovement.findMany({
+      where: movementWhere,
+      select: {
+        type: true,
+        quantity: true,
+        collaboratorId: true,
+      },
+    }),
+    prisma.productCustody.findMany({
+      where: { quantity: { gt: 0 } },
+      include: {
+        product: { select: { id: true, sku: true, name: true, unit: true } },
+      },
+      orderBy: [{ updatedAt: "desc" }],
+    }),
+    prisma.product.findMany({
+      where: { active: true },
+      select: { currentStock: true },
+    }),
+  ]);
+
+  const perEmployeeMap = new Map<string, EmployeeReportItemDTO>();
+  for (const c of collaborators) {
+    perEmployeeMap.set(c.id, {
+      collaboratorId: c.id,
+      collaboratorName: c.name,
+      role: (c.role === "MANAGER" ? "MANAGER" : "EMPLOYEE") as UserRole,
+      department: c.department,
+      withdrawalsCount: 0,
+      withdrawnUnits: 0,
+      returnsCount: 0,
+      returnedUnits: 0,
+      entriesCount: 0,
+      enteredUnits: 0,
+      inUseUnits: 0,
+      activeCustodies: [],
+    });
+  }
+
+  let entriesCount = 0;
+  let enteredUnits = 0;
+  let withdrawalsCount = 0;
+  let withdrawnUnits = 0;
+  let returnsCount = 0;
+  let returnedUnits = 0;
+
+  for (const m of movements) {
+    const qty = roundQuantity(m.quantity);
+    const emp = m.collaboratorId ? perEmployeeMap.get(m.collaboratorId) : undefined;
+
+    if (m.type === "ENTRY") {
+      entriesCount += 1;
+      enteredUnits = roundQuantity(enteredUnits + qty);
+      if (emp) {
+        emp.entriesCount += 1;
+        emp.enteredUnits = roundQuantity(emp.enteredUnits + qty);
+      }
+    } else if (m.type === "EXIT") {
+      withdrawalsCount += 1;
+      withdrawnUnits = roundQuantity(withdrawnUnits + qty);
+      if (emp) {
+        emp.withdrawalsCount += 1;
+        emp.withdrawnUnits = roundQuantity(emp.withdrawnUnits + qty);
+      }
+    } else if (m.type === "RETURN") {
+      returnsCount += 1;
+      returnedUnits = roundQuantity(returnedUnits + qty);
+      if (emp) {
+        emp.returnsCount += 1;
+        emp.returnedUnits = roundQuantity(emp.returnedUnits + qty);
+      }
+    }
+  }
+
+  let totalInUseUnits = 0;
+  for (const custody of activeCustodies) {
+    const qty = roundQuantity(custody.quantity);
+    totalInUseUnits = roundQuantity(totalInUseUnits + qty);
+    const emp = perEmployeeMap.get(custody.collaboratorId);
+    if (emp) {
+      emp.inUseUnits = roundQuantity(emp.inUseUnits + qty);
+      emp.activeCustodies.push({
+        productId: custody.product.id,
+        productSku: custody.product.sku,
+        productName: custody.product.name,
+        productUnit: custody.product.unit,
+        quantity: qty,
+      });
+    }
+  }
+
+  const totalFreeUnits = roundQuantity(
+    products.reduce((acc, p) => acc + p.currentStock, 0)
+  );
+
+  return {
+    totals: {
+      entriesCount,
+      enteredUnits,
+      withdrawalsCount,
+      withdrawnUnits,
+      returnsCount,
+      returnedUnits,
+      totalFreeUnits,
+      totalInUseUnits,
+    },
+    byEmployee: Array.from(perEmployeeMap.values()),
+  };
 }

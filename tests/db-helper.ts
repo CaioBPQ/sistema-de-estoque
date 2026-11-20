@@ -20,6 +20,7 @@ export async function initTestDb(): Promise<void> {
 export async function resetTestDb(): Promise<void> {
   await prisma.stockMovement.deleteMany();
   await prisma.purchaseEntry.deleteMany();
+  await prisma.productCustody.deleteMany();
   await prisma.product.deleteMany();
   await prisma.collaborator.deleteMany();
 }

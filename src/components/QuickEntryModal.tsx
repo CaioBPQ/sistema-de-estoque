@@ -1,9 +1,22 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, CheckCircle2, Plus, Search, Trash2, X } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  FileSpreadsheet,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useInventoryUI } from "@/components/AppShell";
 import { formatQuantity } from "@/lib/format";
-import type { CollaboratorDTO, ProductDTO } from "@/types/inventory";
+import type {
+  CollaboratorDTO,
+  EntryOrderImportPreviewResponse,
+  ProductDTO,
+} from "@/types/inventory";
 
 interface QuickEntryModalProps {
   open: boolean;
@@ -23,6 +36,8 @@ export function QuickEntryModal({
   onClose,
   onSuccess,
 }: QuickEntryModalProps) {
+  const { activeActor } = useInventoryUI();
+
   const [products, setProducts] = useState<ProductDTO[]>([]);
   const [collaborators, setCollaborators] = useState<CollaboratorDTO[]>([]);
   const [loadingData, setLoadingData] = useState(false);
@@ -33,6 +48,11 @@ export function QuickEntryModal({
   const [notes, setNotes] = useState("");
   const [productFilter, setProductFilter] = useState("");
   const [items, setItems] = useState<EntryItemDraft[]>([{ productId: "", quantity: "1" }]);
+
+  const [entryPreview, setEntryPreview] = useState<EntryOrderImportPreviewResponse | null>(
+    null
+  );
+  const [importingExcel, setImportingExcel] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +65,7 @@ export function QuickEntryModal({
     setReferenceCode("");
     setNotes("");
     setProductFilter("");
+    setEntryPreview(null);
 
     let cancelled = false;
     setLoadingData(true);
@@ -52,7 +73,7 @@ export function QuickEntryModal({
     Promise.all([fetch("/api/products"), fetch("/api/collaborators")])
       .then(async ([prodRes, collabRes]) => {
         if (!prodRes.ok || !collabRes.ok) {
-          throw new Error("Falha ao carregar produtos ou colaboradores.");
+          throw new Error("Falha ao carregar volantes ou equipe.");
         }
         const prodJson = (await prodRes.json()) as { products: ProductDTO[] };
         const collabJson = (await collabRes.json()) as { collaborators: CollaboratorDTO[] };
@@ -70,12 +91,10 @@ export function QuickEntryModal({
           setSupplier(initialProd.supplier);
         }
 
-        if (collabJson.collaborators.length > 0) {
-          setResponsibleId((prev) =>
-            collabJson.collaborators.some((c) => c.id === prev)
-              ? prev
-              : collabJson.collaborators[0].id
-          );
+        if (activeActor) {
+          setResponsibleId(activeActor.id);
+        } else if (collabJson.collaborators.length > 0) {
+          setResponsibleId(collabJson.collaborators[0].id);
         }
       })
       .catch((err) => {
@@ -90,7 +109,7 @@ export function QuickEntryModal({
     return () => {
       cancelled = true;
     };
-  }, [open, preselectedProductId]);
+  }, [open, preselectedProductId, activeActor]);
 
   const filteredProducts = useMemo(() => {
     const q = productFilter.trim().toLowerCase();
@@ -104,6 +123,79 @@ export function QuickEntryModal({
   }, [products, productFilter]);
 
   if (!open) return null;
+
+  const applyImportedPreview = (preview: EntryOrderImportPreviewResponse) => {
+    setEntryPreview(preview);
+    if (preview.matchedItems.length > 0) {
+      setItems(
+        preview.matchedItems.map((m) => ({
+          productId: m.productId,
+          quantity: String(m.quantity),
+        }))
+      );
+    }
+  };
+
+  const handleImportSpreadsheet = async (file: File | undefined) => {
+    if (!file) return;
+    setImportingExcel(true);
+    setError(null);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/entries/import", {
+        method: "POST",
+        body: formData,
+      });
+      const json = (await res.json()) as EntryOrderImportPreviewResponse & { error?: string };
+      if (!res.ok) {
+        throw new Error(json.error ?? "Não foi possível ler a planilha do pedido.");
+      }
+
+      applyImportedPreview(json);
+      if (json.matchedItems.length === 0) {
+        setError(
+          "Nenhum item com quantidade > 0 foi reconhecido automaticamente. Ajuste o mapeamento das colunas abaixo."
+        );
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao importar planilha do pedido.");
+    } finally {
+      setImportingExcel(false);
+    }
+  };
+
+  const handleRemapColumns = async (patch: {
+    codeCol?: string | null;
+    modelCol?: string | null;
+    qtyCol?: string | null;
+  }) => {
+    if (!entryPreview) return;
+    setError(null);
+    try {
+      const res = await fetch("/api/entries/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "reparse",
+          fileName: entryPreview.fileName,
+          headers: entryPreview.headers,
+          rawRows: entryPreview.rawRows,
+          codeCol:
+            patch.codeCol !== undefined ? patch.codeCol : entryPreview.suggestedCodeCol,
+          modelCol:
+            patch.modelCol !== undefined ? patch.modelCol : entryPreview.suggestedModelCol,
+          qtyCol: patch.qtyCol !== undefined ? patch.qtyCol : entryPreview.suggestedQtyCol,
+        }),
+      });
+      if (!res.ok) return;
+      const updated = (await res.json()) as EntryOrderImportPreviewResponse;
+      applyImportedPreview(updated);
+    } catch {
+      // Non-fatal remap error
+    }
+  };
 
   const addItemRow = () => {
     const usedIds = new Set(items.map((item) => item.productId));
@@ -130,14 +222,20 @@ export function QuickEntryModal({
       quantity: Number(item.quantity.replace(",", ".")),
     }));
 
-    if (parsedItems.some((item) => !item.productId || !Number.isFinite(item.quantity) || item.quantity <= 0)) {
-      setError("Verifique os produtos e informe quantidades maiores que zero.");
+    if (
+      parsedItems.some(
+        (item) => !item.productId || !Number.isFinite(item.quantity) || item.quantity <= 0
+      )
+    ) {
+      setError("Verifique os volantes e informe quantidades maiores que zero.");
       return;
     }
 
     const uniqueIds = new Set(parsedItems.map((i) => i.productId));
     if (uniqueIds.size !== parsedItems.length) {
-      setError("Produto repetido na mesma entrada. Agrupe a quantidade em uma única linha.");
+      setError(
+        "Volante repetido na mesma entrada. Agrupe a quantidade em uma única linha."
+      );
       return;
     }
 
@@ -160,7 +258,7 @@ export function QuickEntryModal({
       }
 
       onSuccess(
-        `Entrada registrada com ${parsedItems.length} ${parsedItems.length === 1 ? "item" : "itens"} (${supplier.trim()}).`
+        `Entrada registrada com ${parsedItems.length} ${parsedItems.length === 1 ? "modelo" : "modelos"} (${supplier.trim()}).`
       );
       onClose();
     } catch (err) {
@@ -177,14 +275,14 @@ export function QuickEntryModal({
       aria-modal="true"
       aria-labelledby="quick-entry-title"
     >
-      <div className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl">
+      <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <div>
             <h2 id="quick-entry-title" className="text-lg font-bold text-slate-900">
               Registrar Entrada / Pedido de Compra
             </h2>
             <p className="text-xs text-slate-500">
-              Incrementa os saldos automaticamente em transação única e gera histórico do pedido.
+              Adicione manualmente ou importe uma planilha Excel para preencher o pedido em lote.
             </p>
           </div>
           <button
@@ -215,7 +313,7 @@ export function QuickEntryModal({
                 required
                 value={supplier}
                 onChange={(e) => setSupplier(e.target.value)}
-                placeholder="Ex: SegurPro Distribuidora"
+                placeholder="Ex: Garfer"
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
@@ -237,7 +335,7 @@ export function QuickEntryModal({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-600">
-                Responsável pelo recebimento *
+                Responsável pelo lançamento *
               </label>
               <select
                 required
@@ -248,8 +346,7 @@ export function QuickEntryModal({
               >
                 {collaborators.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.name}
-                    {c.department ? ` (${c.department})` : ""}
+                    {c.name} ({c.role === "MANAGER" ? "Gestor" : "Funcionário"})
                   </option>
                 ))}
               </select>
@@ -263,28 +360,138 @@ export function QuickEntryModal({
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Opcional (ex: Reposição mensal)"
+                placeholder="Opcional (ex: Reposição mensal Garfer)"
                 className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
           </div>
 
-          {/* Lista de Itens Recebidos */}
-          <div className="space-y-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-3.5">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          {/* Lista de Itens Recebidos + Importar Excel em Lote */}
+          <div className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/70 p-3.5">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <span className="text-xs font-bold uppercase tracking-wide text-slate-700">
-                Volantes Recebidos
+                Volantes do Pedido ({items.length})
               </span>
-              <button
-                type="button"
-                onClick={addItemRow}
-                disabled={products.length === 0}
-                className="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-blue-600 shadow-sm ring-1 ring-slate-200 hover:bg-blue-50"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Adicionar volante
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100">
+                  <FileSpreadsheet className="h-3.5 w-3.5" />
+                  {importingExcel ? "Lendo planilha..." : "Importar Excel"}
+                  <input
+                    type="file"
+                    accept=".xlsx,.csv,.txt"
+                    className="hidden"
+                    disabled={importingExcel}
+                    onChange={(e) => {
+                      void handleImportSpreadsheet(e.target.files?.[0]);
+                      e.currentTarget.value = "";
+                    }}
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  onClick={addItemRow}
+                  disabled={products.length === 0}
+                  className="inline-flex items-center gap-1 rounded-lg bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Adicionar volante
+                </button>
+              </div>
             </div>
+
+            {/* Mapeamento de colunas após upload no pedido */}
+            {entryPreview && (
+              <div className="space-y-2.5 rounded-xl border border-blue-200 bg-white p-3 text-xs">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="font-bold text-slate-900">
+                    Planilha carregada: {entryPreview.fileName}
+                  </span>
+                  <span className="font-semibold text-emerald-700">
+                    {entryPreview.matchedItems.length} modelo(s) validado(s)
+                    {entryPreview.skippedZeroCount > 0
+                      ? ` • ${entryPreview.skippedZeroCount} linha(s) com qtd 0 ignorada(s)`
+                      : ""}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                  <div>
+                    <label className="mb-1 block text-[11px] font-semibold text-slate-600">
+                      Coluna Código (opcional)
+                    </label>
+                    <select
+                      value={entryPreview.suggestedCodeCol ?? ""}
+                      onChange={(e) =>
+                        void handleRemapColumns({ codeCol: e.target.value || null })
+                      }
+                      className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs"
+                    >
+                      <option value="">(Nenhuma)</option>
+                      {entryPreview.headers.map((h) => (
+                        <option key={h} value={h}>
+                          {h}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-[11px] font-semibold text-slate-600">
+                      Coluna Modelo do Volante
+                    </label>
+                    <select
+                      value={entryPreview.suggestedModelCol ?? ""}
+                      onChange={(e) =>
+                        void handleRemapColumns({ modelCol: e.target.value || null })
+                      }
+                      className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs"
+                    >
+                      <option value="">(Nenhuma)</option>
+                      {entryPreview.headers.map((h) => (
+                        <option key={h} value={h}>
+                          {h}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-[11px] font-semibold text-slate-600">
+                      Coluna Quantidade *
+                    </label>
+                    <select
+                      value={entryPreview.suggestedQtyCol ?? ""}
+                      onChange={(e) =>
+                        void handleRemapColumns({ qtyCol: e.target.value || null })
+                      }
+                      className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-xs"
+                    >
+                      <option value="">(Selecione)</option>
+                      {entryPreview.headers.map((h) => (
+                        <option key={h} value={h}>
+                          {h}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {entryPreview.unmatchedRows.length > 0 && (
+                  <div className="rounded-lg border border-amber-200 bg-amber-50 p-2 text-[11px] text-amber-900">
+                    <strong className="block">
+                      {entryPreview.unmatchedRows.length} linha(s) não puderam ser vinculadas:
+                    </strong>
+                    <ul className="mt-1 list-disc pl-4">
+                      {entryPreview.unmatchedRows.slice(0, 5).map((u) => (
+                        <li key={u.rowNumber}>
+                          Linha #{u.rowNumber} ({u.rawModel || "sem nome"} — Qtd:{" "}
+                          {u.rawQuantity || "-"}): {u.reason}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
@@ -297,7 +504,7 @@ export function QuickEntryModal({
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="max-h-64 space-y-2 overflow-y-auto pr-1">
               {items.map((row, idx) => {
                 const prod = products.find((p) => p.id === row.productId);
                 const rowOptions =
@@ -376,7 +583,7 @@ export function QuickEntryModal({
               className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <CheckCircle2 className="h-4 w-4" />
-              {submitting ? "Salvando entrada..." : "Confirmar Entrada"}
+              {submitting ? "Salvando entrada..." : `Confirmar Entrada (${items.length})`}
             </button>
           </div>
         </form>

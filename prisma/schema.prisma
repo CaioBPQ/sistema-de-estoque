@@ -8,19 +8,20 @@ datasource db {
 }
 
 model Product {
-  id           String          @id @default(cuid())
-  sku          String          @unique
+  id           String           @id @default(cuid())
+  sku          String           @unique
   name         String
   category     String
-  unit         String          @default("un")
+  unit         String           @default("un")
   weightGrams  Float?
   supplier     String?
-  minStock     Float           @default(0)
-  currentStock Float           @default(0)
-  active       Boolean         @default(true)
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  minStock     Float            @default(0)
+  currentStock Float            @default(0)
+  active       Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
   movements    StockMovement[]
+  custodies    ProductCustody[]
 
   @@index([name])
   @@index([category])
@@ -28,18 +29,35 @@ model Product {
 }
 
 model Collaborator {
-  id         String          @id @default(cuid())
+  id         String           @id @default(cuid())
   name       String
   department String?
-  badgeCode  String?         @unique
-  active     Boolean         @default(true)
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
+  badgeCode  String?          @unique
+  role       String           @default("EMPLOYEE") // "MANAGER" | "EMPLOYEE"
+  active     Boolean          @default(true)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
   entries    PurchaseEntry[]
   movements  StockMovement[]
+  custodies  ProductCustody[]
 
   @@index([name])
   @@index([active])
+  @@index([role])
+}
+
+model ProductCustody {
+  id             String       @id @default(cuid())
+  quantity       Float        @default(0)
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id])
+  collaboratorId String
+  collaborator   Collaborator @relation(fields: [collaboratorId], references: [id])
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([productId, collaboratorId])
+  @@index([collaboratorId])
+  @@index([productId])
 }
 
 model PurchaseEntry {
@@ -60,7 +78,7 @@ model PurchaseEntry {
 
 model StockMovement {
   id              String         @id @default(cuid())
-  type            String         // "ENTRY" | "EXIT" | "IMPORT"
+  type            String         // "ENTRY" | "EXIT" | "RETURN" | "IMPORT"
   quantity        Float
   previousStock   Float
   newStock        Float

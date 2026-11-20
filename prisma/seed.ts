@@ -13,21 +13,27 @@ interface GarferSteeringWheelSeed {
 }
 
 async function main() {
+  const existingUsers = await prisma.collaborator.count();
+  if (existingUsers === 0) {
+    await prisma.collaborator.createMany({
+      data: [
+        { name: "Luiz", department: "Dono / Gestor", badgeCode: "GES-001", role: "MANAGER" },
+        { name: "Mauro", department: "Operação / Volantes", badgeCode: "FUN-001", role: "EMPLOYEE" },
+        { name: "Jean", department: "Operação / Volantes", badgeCode: "FUN-002", role: "EMPLOYEE" },
+        { name: "Guilherme", department: "Operação / Volantes", badgeCode: "FUN-003", role: "EMPLOYEE" },
+        { name: "Carlinho", department: "Operação / Volantes", badgeCode: "FUN-004", role: "EMPLOYEE" },
+      ],
+    });
+    console.log("[seed] Perfis criados: Luiz (Gestor) e Mauro, Jean, Guilherme, Carlinho (Funcionários).");
+  }
+
   const existingProducts = await prisma.product.count();
   if (existingProducts > 0) {
-    console.log("[seed] Banco já possui volantes cadastrados. Pulando seed inicial.");
+    console.log("[seed] Banco já possui volantes cadastrados. Pulando carga de produtos.");
     return;
   }
 
   console.log("[seed] Populando catálogo base de volantes Garfer...");
-
-  await prisma.collaborator.createMany({
-    data: [
-      { name: "Almoxarifado Geral", department: "Estoque", badgeCode: "EST-001" },
-      { name: "Expedição", department: "Logística", badgeCode: "EXP-002" },
-      { name: "Comercial", department: "Vendas / Troca", badgeCode: "COM-003" },
-    ],
-  });
 
   const items = volantesGarfer as GarferSteeringWheelSeed[];
   await prisma.product.createMany({

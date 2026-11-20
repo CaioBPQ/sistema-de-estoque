@@ -4,6 +4,9 @@ import { ValidationError } from "@/lib/services/collaborator-service";
 import { withSqliteRetry } from "@/lib/services/inventory-service";
 import { importCommitSchema, normalizeSku, roundQuantity } from "@/lib/validators";
 import type {
+  EntryOrderImportPreviewResponse,
+  EntryOrderMatchedItem,
+  EntryOrderUnmatchedRow,
   ImportColumnKey,
   ImportColumnMapping,
   ImportCommitResult,
@@ -645,4 +648,196 @@ export function generateTemplateCsv(): string {
     "VI1171;VOL VW GOL G5;Volkswagen;2052;un;Garfer;3;10",
   ];
   return `\uFEFF${lines.join("\r\n")}`;
+}
+
+const ENTRY_QTY_ALIASES = [
+  "quantidade",
+  "qtd",
+  "qtde",
+  "ped",
+  "pedido",
+  "sub",
+  "unidades",
+  "qnt",
+  "entrada",
+  "recebido",
+];
+
+function normalizeModelSearch(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function suggestEntryOrderColumns(headers: string[]): {
+  codeCol: string | null;
+  modelCol: string | null;
+  qtyCol: string | null;
+} {
+  const normalized = headers.map((h) => ({
+    original: h,
+    norm: normalizeHeader(h),
+  }));
+
+  const findMatch = (aliases: string[]): string | null => {
+    const exact = normalized.find((h) => aliases.includes(h.norm));
+    if (exact) return exact.original;
+    const partial = normalized.find((h) =>
+      aliases.some((alias) => alias.length >= 3 && h.norm.includes(alias))
+    );
+    return partial?.original ?? null;
+  };
+
+  return {
+    codeCol: findMatch(COLUMN_ALIASES.sku),
+    modelCol: findMatch(COLUMN_ALIASES.name),
+    qtyCol: findMatch(ENTRY_QTY_ALIASES),
+  };
+}
+
+export async function buildEntryOrderImportPreview(
+  fileName: string,
+  headers: string[],
+  rawRows: Record<string, string>[],
+  customColumns?: {
+    codeCol?: string | null;
+    modelCol?: string | null;
+    qtyCol?: string | null;
+  }
+): Promise<EntryOrderImportPreviewResponse> {
+  await ensureSqliteReady();
+
+  const suggested = suggestEntryOrderColumns(headers);
+  const codeCol = customColumns?.codeCol !== undefined ? customColumns.codeCol : suggested.codeCol;
+  const modelCol =
+    customColumns?.modelCol !== undefined ? customColumns.modelCol : suggested.modelCol;
+  const qtyCol = customColumns?.qtyCol !== undefined ? customColumns.qtyCol : suggested.qtyCol;
+
+  const products = await prisma.product.findMany({
+    where: { active: true },
+    select: { id: true, sku: true, name: true, unit: true, currentStock: true },
+  });
+
+  const bySku = new Map<string, (typeof products)[number]>();
+  const byExactName = new Map<string, (typeof products)[number]>();
+
+  for (const p of products) {
+    bySku.set(normalizeSku(p.sku), p);
+    byExactName.set(normalizeModelSearch(p.name), p);
+  }
+
+  const matchedMap = new Map<string, EntryOrderMatchedItem>();
+  const unmatchedRows: EntryOrderUnmatchedRow[] = [];
+  let skippedZeroCount = 0;
+
+  rawRows.forEach((row, index) => {
+    const rowNumber = index + 2;
+    const rawCode = codeCol ? (row[codeCol] ?? "").trim() : "";
+    const rawModel = modelCol ? (row[modelCol] ?? "").trim() : "";
+    const rawQty = qtyCol ? (row[qtyCol] ?? "").trim() : "";
+
+    if (!rawCode && !rawModel) {
+      return;
+    }
+
+    if (!qtyCol) {
+      unmatchedRows.push({
+        rowNumber,
+        rawModel: rawModel || rawCode,
+        rawQuantity: rawQty,
+        reason: "Coluna de quantidade não mapeada",
+      });
+      return;
+    }
+
+    if (!rawQty) {
+      skippedZeroCount += 1;
+      return;
+    }
+
+    const parsedQty = parseLocaleNumber(rawQty);
+    if (parsedQty === null || parsedQty < 0) {
+      unmatchedRows.push({
+        rowNumber,
+        rawModel: rawModel || rawCode,
+        rawQuantity: rawQty,
+        reason: "Quantidade inválida",
+      });
+      return;
+    }
+
+    if (parsedQty === 0) {
+      skippedZeroCount += 1;
+      return;
+    }
+
+    let matchedProduct: (typeof products)[number] | undefined;
+
+    if (rawCode) {
+      matchedProduct = bySku.get(normalizeSku(rawCode));
+    }
+
+    if (!matchedProduct && rawModel) {
+      const normalizedModel = normalizeModelSearch(rawModel);
+      matchedProduct = byExactName.get(normalizedModel) ?? bySku.get(normalizeSku(rawModel));
+
+      if (!matchedProduct) {
+        const candidates = products.filter((p) => {
+          const pNorm = normalizeModelSearch(p.name);
+          return pNorm.includes(normalizedModel) || normalizedModel.includes(pNorm);
+        });
+        if (candidates.length === 1) {
+          matchedProduct = candidates[0];
+        } else if (candidates.length > 1) {
+          unmatchedRows.push({
+            rowNumber,
+            rawModel: rawModel || rawCode,
+            rawQuantity: rawQty,
+            reason: `Múltiplos modelos parecidos (${candidates.length}); especifique o código ou descrição exata`,
+          });
+          return;
+        }
+      }
+    }
+
+    if (!matchedProduct) {
+      unmatchedRows.push({
+        rowNumber,
+        rawModel: rawModel || rawCode,
+        rawQuantity: rawQty,
+        reason: "Modelo/Código não encontrado no catálogo ativo",
+      });
+      return;
+    }
+
+    const existing = matchedMap.get(matchedProduct.id);
+    if (existing) {
+      existing.quantity = roundQuantity(existing.quantity + parsedQty);
+    } else {
+      matchedMap.set(matchedProduct.id, {
+        productId: matchedProduct.id,
+        sku: matchedProduct.sku,
+        name: matchedProduct.name,
+        unit: matchedProduct.unit,
+        currentStock: roundQuantity(matchedProduct.currentStock),
+        quantity: roundQuantity(parsedQty),
+      });
+    }
+  });
+
+  return {
+    fileName,
+    headers,
+    rawRowCount: rawRows.length,
+    rawRows,
+    suggestedModelCol: modelCol,
+    suggestedCodeCol: codeCol,
+    suggestedQtyCol: qtyCol,
+    matchedItems: Array.from(matchedMap.values()),
+    unmatchedRows,
+    skippedZeroCount,
+  };
 }

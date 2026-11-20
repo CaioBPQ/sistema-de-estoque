@@ -1,4 +1,4 @@
-import type { MovementType, StockStatus } from "@/types/inventory";
+import type { MovementType, StockStatus, UserRole } from "@/types/inventory";
 
 const STOCK_STATUS_STYLES: Record<
   StockStatus,
@@ -33,6 +33,10 @@ const MOVEMENT_TYPE_STYLES: Record<
     label: "Retirada",
     badgeClass: "bg-orange-50 text-orange-800 ring-1 ring-orange-600/25",
   },
+  RETURN: {
+    label: "Devolução",
+    badgeClass: "bg-sky-50 text-sky-700 ring-1 ring-sky-600/20",
+  },
   IMPORT: {
     label: "Importação",
     badgeClass: "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600/20",
@@ -58,6 +62,21 @@ export function MovementTypeBadge({ type }: { type: MovementType }) {
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${cfg.badgeClass}`}
     >
       {cfg.label}
+    </span>
+  );
+}
+
+export function RoleBadge({ role }: { role: UserRole }) {
+  const isManager = role === "MANAGER";
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ${
+        isManager
+          ? "bg-blue-50 text-blue-700 ring-1 ring-blue-600/20"
+          : "bg-slate-100 text-slate-700 ring-1 ring-slate-300"
+      }`}
+    >
+      {isManager ? "Dono / Gestor" : "Funcionário"}
     </span>
   );
 }

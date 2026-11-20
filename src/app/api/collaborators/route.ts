@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireManagerActor } from "@/app/api/_lib/actor-auth";
 import { apiErrorResponse } from "@/app/api/_lib/error-response";
 import { createCollaborator, listCollaborators } from "@/lib/services/collaborator-service";
 
@@ -16,6 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    await requireManagerActor(request);
     const body = await request.json();
     const collaborator = await createCollaborator(body);
     return NextResponse.json({ collaborator }, { status: 201 });

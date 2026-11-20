@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireManagerActor } from "@/app/api/_lib/actor-auth";
 import { apiErrorResponse } from "@/app/api/_lib/error-response";
 import { createProduct, listProducts } from "@/lib/services/inventory-service";
 import type { ProductStatusFilter } from "@/types/inventory";
@@ -30,6 +31,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    await requireManagerActor(request);
     const body = await request.json();
     const product = await createProduct(body);
     return NextResponse.json({ product }, { status: 201 });

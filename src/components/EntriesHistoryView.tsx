@@ -1,19 +1,35 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ArrowDownToLine, Calendar, FileText, PackagePlus, Search, User } from "lucide-react";
+import {
+  ArrowDownToLine,
+  Calendar,
+  FileSpreadsheet,
+  FileText,
+  Lock,
+  PackagePlus,
+  Search,
+  User,
+} from "lucide-react";
 import { useInventoryUI } from "@/components/AppShell";
 import { formatDateTime, formatQuantity } from "@/lib/format";
 import type { PurchaseEntryDTO } from "@/types/inventory";
 
 export function EntriesHistoryView() {
-  const { refreshKey, openEntryModal } = useInventoryUI();
+  const { activeActor, refreshKey, openEntryModal } = useInventoryUI();
+  const isManager = activeActor?.role === "MANAGER";
+
   const [entries, setEntries] = useState<PurchaseEntryDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
   const loadEntries = useCallback(async () => {
+    if (!isManager) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -26,7 +42,7 @@ export function EntriesHistoryView() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isManager]);
 
   useEffect(() => {
     void loadEntries();
@@ -48,6 +64,26 @@ export function EntriesHistoryView() {
     });
   }, [entries, search]);
 
+  if (!isManager) {
+    return (
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
+        <Lock className="mx-auto h-10 w-10 text-amber-600" />
+        <h2 className="mt-3 text-lg font-bold text-amber-950">
+          Área exclusiva do Gestor (Luiz)
+        </h2>
+        <p className="mt-1 text-sm text-amber-800">
+          O perfil de Funcionário possui permissão para retiradas e devoluções no catálogo.
+        </p>
+        <Link
+          href="/"
+          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
+        >
+          Voltar ao Catálogo de Volantes
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -56,18 +92,28 @@ export function EntriesHistoryView() {
             Entradas & Pedidos de Compra
           </h1>
           <p className="text-sm text-slate-500">
-            Histórico completo de mercadorias recebidas, notas fiscais, fornecedores e responsáveis.
+            Registre chegadas de volantes manualmente ou importando uma planilha Excel em lote.
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => openEntryModal()}
-          className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700"
-        >
-          <PackagePlus className="h-4 w-4" />
-          Registrar Nova Entrada
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => openEntryModal()}
+            className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-bold text-blue-700 hover:bg-blue-100"
+          >
+            <FileSpreadsheet className="h-4 w-4" />
+            Importar Excel no Pedido
+          </button>
+          <button
+            type="button"
+            onClick={() => openEntryModal()}
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700"
+          >
+            <PackagePlus className="h-4 w-4" />
+            Registrar Nova Entrada
+          </button>
+        </div>
       </div>
 
       <div className="relative">
@@ -76,7 +122,7 @@ export function EntriesHistoryView() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Filtrar por fornecedor, NF/pedido, responsável ou produto..."
+          placeholder="Filtrar por fornecedor, NF/pedido, responsável ou volante..."
           className="w-full rounded-2xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-900 shadow-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
         />
       </div>
@@ -98,7 +144,7 @@ export function EntriesHistoryView() {
             Nenhuma entrada encontrada
           </p>
           <p className="mt-1 text-sm text-slate-500">
-            Registre o recebimento de notas fiscais ou pedidos de compra para incrementar o estoque.
+            Clique em &ldquo;Importar Excel no Pedido&rdquo; ou &ldquo;Registrar Nova Entrada&rdquo; para lançar os volantes recebidos.
           </p>
         </div>
       ) : (

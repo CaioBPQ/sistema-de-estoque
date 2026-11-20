@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireManagerActor } from "@/app/api/_lib/actor-auth";
 import { apiErrorResponse } from "@/app/api/_lib/error-response";
 import {
   archiveProduct,
@@ -25,6 +26,7 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
+    await requireManagerActor(request);
     const body = await request.json();
     const product = await updateProduct(params.id, body);
     return NextResponse.json({ product });
@@ -34,10 +36,11 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<NextResponse> {
   try {
+    await requireManagerActor(request);
     const product = await archiveProduct(params.id);
     return NextResponse.json({ product });
   } catch (err) {

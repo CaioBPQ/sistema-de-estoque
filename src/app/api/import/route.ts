@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireManagerActor } from "@/app/api/_lib/actor-auth";
 import { apiErrorResponse } from "@/app/api/_lib/error-response";
 import { ValidationError } from "@/lib/services/collaborator-service";
 import {
@@ -69,6 +70,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    await requireManagerActor(request);
     const contentType = request.headers.get("content-type") ?? "";
 
     if (contentType.includes("multipart/form-data")) {

@@ -104,12 +104,14 @@ export const collaboratorCreateSchema = z.object({
   name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(120),
   department: optionalTrimmedString(80),
   badgeCode: optionalTrimmedString(40),
+  role: z.enum(["MANAGER", "EMPLOYEE"]).optional().default("EMPLOYEE"),
 });
 
 export const collaboratorUpdateSchema = z.object({
   name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(120).optional(),
   department: optionalTrimmedString(80),
   badgeCode: optionalTrimmedString(40),
+  role: z.enum(["MANAGER", "EMPLOYEE"]).optional(),
   active: z.boolean().optional(),
 });
 
@@ -142,16 +144,31 @@ export const purchaseEntryCreateSchema = z.object({
 });
 
 export const withdrawalCreateSchema = z.object({
-  productId: z.string().trim().min(1, "Selecione um produto"),
+  productId: z.string().trim().min(1, "Selecione um volante"),
   quantity: positiveQty,
-  collaboratorId: z.string().trim().min(1, "Informe quem está retirando o item"),
+  collaboratorId: z.string().trim().min(1, "Informe quem está retirando o volante"),
   reason: optionalTrimmedString(240),
+});
+
+export const returnCreateSchema = z.object({
+  productId: z.string().trim().min(1, "Selecione um volante"),
+  quantity: positiveQty,
+  collaboratorId: z.string().trim().min(1, "Informe quem está devolvendo o volante"),
+  reason: optionalTrimmedString(240),
+});
+
+export const aiChatRequestSchema = z.object({
+  question: z
+    .string()
+    .trim()
+    .min(1, "Digite uma pergunta sobre o estoque ou modelo de volante")
+    .max(500, "Pergunta muito longa"),
 });
 
 export const movementFilterSchema = z.object({
   productId: z.string().trim().optional(),
   collaboratorId: z.string().trim().optional(),
-  type: z.enum(["ALL", "ENTRY", "EXIT", "IMPORT"]).optional().default("ALL"),
+  type: z.enum(["ALL", "ENTRY", "EXIT", "RETURN", "IMPORT"]).optional().default("ALL"),
   startDate: z
     .string()
     .trim()

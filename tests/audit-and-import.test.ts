@@ -3,6 +3,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { prisma } from "@/lib/prisma";
 import { createCollaborator } from "@/lib/services/collaborator-service";
 import {
+  buildEntryOrderImportPreview,
   buildImportPreview,
   commitImport,
   parseSpreadsheetBuffer,
@@ -184,5 +185,45 @@ describe("Log de Auditoria e Importação Excel/CSV", () => {
     expect(gol?.category).toBe("Volkswagen");
     expect(gol?.weightGrams).toBe(2052);
     expect(gol?.currentStock).toBe(0);
+  });
+
+  it("preenche itens da entrada de pedido via Excel/CSV mapeando Modelo/Código e Quantidade", async () => {
+    const agile = await createProduct({
+      sku: "VI0487",
+      name: "VOL CHEVROLET AGILE",
+      category: "Chevrolet",
+      unit: "un",
+      minStock: 2,
+      currentStock: 0,
+    });
+    const gol = await createProduct({
+      sku: "VI1171",
+      name: "VOL VW GOL G5",
+      category: "Volkswagen",
+      unit: "un",
+      minStock: 2,
+      currentStock: 1,
+    });
+
+    // Sheet without code column on row 2 — matches both by SKU and by Model description
+    const orderCsv = [
+      "Modelo do Volante;Quantidade",
+      "VOL CHEVROLET AGILE;4",
+      "VI1171;6",
+      "VOLANTE INEXISTENTE XYZ;2",
+      "VOL CHEVROLET AGILE;1",
+    ].join("\r\n");
+
+    const { headers, rows } = await parseSpreadsheetBuffer(
+      Buffer.from(orderCsv, "utf-8"),
+      "pedido.csv"
+    );
+    const preview = await buildEntryOrderImportPreview("pedido.csv", headers, rows);
+
+    expect(preview.matchedItems).toHaveLength(2);
+    expect(preview.matchedItems.find((i) => i.productId === agile.id)?.quantity).toBe(5);
+    expect(preview.matchedItems.find((i) => i.productId === gol.id)?.quantity).toBe(6);
+    expect(preview.unmatchedRows).toHaveLength(1);
+    expect(preview.unmatchedRows[0].rawModel).toBe("VOLANTE INEXISTENTE XYZ");
   });
 });

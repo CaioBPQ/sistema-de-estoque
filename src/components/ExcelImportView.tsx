@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Download,
   FileSpreadsheet,
+  Lock,
   Upload,
 } from "lucide-react";
 import { useInventoryUI } from "@/components/AppShell";
@@ -32,7 +33,8 @@ const MAPPING_FIELDS: Array<{ key: ImportColumnKey; label: string; required?: bo
 ];
 
 export function ExcelImportView() {
-  const { showToast, triggerRefresh } = useInventoryUI();
+  const { activeActor, showToast, triggerRefresh } = useInventoryUI();
+  const isManager = activeActor?.role === "MANAGER";
 
   const [collaborators, setCollaborators] = useState<CollaboratorDTO[]>([]);
   const [collaboratorId, setCollaboratorId] = useState("");
@@ -163,6 +165,26 @@ export function ExcelImportView() {
       setCommitting(false);
     }
   };
+
+  if (!isManager) {
+    return (
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
+        <Lock className="mx-auto h-10 w-10 text-amber-600" />
+        <h2 className="mt-3 text-lg font-bold text-amber-950">
+          Importação de planilhas restrita ao Gestor (Luiz)
+        </h2>
+        <p className="mt-1 text-sm text-amber-800">
+          Apenas o Dono/Gestor pode importar planilhas para o catálogo geral.
+        </p>
+        <Link
+          href="/"
+          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
+        >
+          Voltar ao Catálogo de Volantes
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

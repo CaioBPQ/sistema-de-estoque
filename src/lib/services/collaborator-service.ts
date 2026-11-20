@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { ensureSqliteReady, prisma } from "@/lib/prisma";
 import { collaboratorCreateSchema, collaboratorUpdateSchema } from "@/lib/validators";
-import type { CollaboratorDTO } from "@/types/inventory";
+import type { CollaboratorDTO, UserRole } from "@/types/inventory";
 
 export class ServiceError extends Error {
   constructor(
@@ -37,23 +37,29 @@ export class ValidationError extends ServiceError {
   }
 }
 
-function toCollaboratorDTO(
-  row: {
-    id: string;
-    name: string;
-    department: string | null;
-    badgeCode: string | null;
-    active: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    _count?: { movements: number };
+export class ForbiddenError extends ServiceError {
+  constructor(message: string) {
+    super(message, 403);
   }
-): CollaboratorDTO {
+}
+
+function toCollaboratorDTO(row: {
+  id: string;
+  name: string;
+  department: string | null;
+  badgeCode: string | null;
+  role: string;
+  active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  _count?: { movements: number };
+}): CollaboratorDTO {
   return {
     id: row.id,
     name: row.name,
     department: row.department,
     badgeCode: row.badgeCode,
+    role: (row.role === "MANAGER" ? "MANAGER" : "EMPLOYEE") as UserRole,
     active: row.active,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
@@ -68,7 +74,7 @@ export async function listCollaborators(options?: {
 
   const rows = await prisma.collaborator.findMany({
     where: options?.includeInactive ? undefined : { active: true },
-    orderBy: [{ active: "desc" }, { name: "asc" }],
+    orderBy: [{ active: "desc" }, { role: "desc" }, { name: "asc" }],
     include: {
       _count: {
         select: { movements: true },
@@ -79,11 +85,24 @@ export async function listCollaborators(options?: {
   return rows.map(toCollaboratorDTO);
 }
 
+export async function getCollaboratorById(id: string): Promise<CollaboratorDTO | null> {
+  await ensureSqliteReady();
+  const row = await prisma.collaborator.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: { movements: true },
+      },
+    },
+  });
+  return row ? toCollaboratorDTO(row) : null;
+}
+
 export async function createCollaborator(input: unknown): Promise<CollaboratorDTO> {
   await ensureSqliteReady();
   const parsed = collaboratorCreateSchema.safeParse(input);
   if (!parsed.success) {
-    throw new ValidationError(parsed.error.issues[0]?.message ?? "Dados de colaborador inválidos");
+    throw new ValidationError(parsed.error.issues[0]?.message ?? "Dados de usuário inválidos");
   }
 
   const data = parsed.data;
@@ -95,6 +114,7 @@ export async function createCollaborator(input: unknown): Promise<CollaboratorDT
         name: data.name,
         department: data.department,
         badgeCode: normalizedBadge,
+        role: data.role,
       },
       include: {
         _count: { select: { movements: true } },
@@ -103,7 +123,7 @@ export async function createCollaborator(input: unknown): Promise<CollaboratorDT
     return toCollaboratorDTO(created);
   } catch (err) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === "P2002") {
-      throw new ConflictError(`Já existe um colaborador com a matrícula/código ${normalizedBadge}.`);
+      throw new ConflictError(`Já existe um usuário com a matrícula/código ${normalizedBadge}.`);
     }
     throw err;
   }
@@ -118,7 +138,7 @@ export async function updateCollaborator(id: string, input: unknown): Promise<Co
 
   const existing = await prisma.collaborator.findUnique({ where: { id } });
   if (!existing) {
-    throw new NotFoundError("Colaborador não encontrado.");
+    throw new NotFoundError("Usuário não encontrado.");
   }
 
   const data = parsed.data;
@@ -132,6 +152,7 @@ export async function updateCollaborator(id: string, input: unknown): Promise<Co
         name: data.name,
         department: data.department,
         badgeCode: normalizedBadge,
+        role: data.role,
         active: data.active,
       },
       include: {

@@ -2,7 +2,9 @@ export type StockStatus = "OK" | "LOW" | "ZERO";
 
 export type ProductStatusFilter = StockStatus | "ALL" | "IN_STOCK";
 
-export type MovementType = "ENTRY" | "EXIT" | "IMPORT";
+export type MovementType = "ENTRY" | "EXIT" | "RETURN" | "IMPORT";
+
+export type UserRole = "MANAGER" | "EMPLOYEE";
 
 export interface ProductDTO {
   id: string;
@@ -25,10 +27,25 @@ export interface CollaboratorDTO {
   name: string;
   department: string | null;
   badgeCode: string | null;
+  role: UserRole;
   active: boolean;
   createdAt: string;
   updatedAt: string;
   movementCount?: number;
+}
+
+export interface ProductCustodyDTO {
+  id: string;
+  productId: string;
+  productSku: string;
+  productName: string;
+  productCategory: string;
+  productUnit: string;
+  collaboratorId: string;
+  collaboratorName: string;
+  collaboratorRole: UserRole;
+  quantity: number;
+  updatedAt: string;
 }
 
 export interface PurchaseEntryItemDTO {
@@ -93,6 +110,41 @@ export interface MovementsListResponse {
   total: number;
   page: number;
   pageSize: number;
+}
+
+export interface EmployeeReportItemDTO {
+  collaboratorId: string;
+  collaboratorName: string;
+  role: UserRole;
+  department: string | null;
+  withdrawalsCount: number;
+  withdrawnUnits: number;
+  returnsCount: number;
+  returnedUnits: number;
+  entriesCount: number;
+  enteredUnits: number;
+  inUseUnits: number;
+  activeCustodies: Array<{
+    productId: string;
+    productSku: string;
+    productName: string;
+    productUnit: string;
+    quantity: number;
+  }>;
+}
+
+export interface ManagerReportDTO {
+  totals: {
+    entriesCount: number;
+    enteredUnits: number;
+    withdrawalsCount: number;
+    withdrawnUnits: number;
+    returnsCount: number;
+    returnedUnits: number;
+    totalFreeUnits: number;
+    totalInUseUnits: number;
+  };
+  byEmployee: EmployeeReportItemDTO[];
 }
 
 export type ImportColumnKey =
@@ -163,4 +215,62 @@ export interface ImportCommitResult {
   updated: number;
   skipped: number;
   movementsLogged: number;
+}
+
+export interface EntryOrderMatchedItem {
+  productId: string;
+  sku: string;
+  name: string;
+  unit: string;
+  currentStock: number;
+  quantity: number;
+}
+
+export interface EntryOrderUnmatchedRow {
+  rowNumber: number;
+  rawModel: string;
+  rawQuantity: string;
+  reason: string;
+}
+
+export interface EntryOrderImportPreviewResponse {
+  fileName: string;
+  headers: string[];
+  rawRowCount: number;
+  rawRows: Record<string, string>[];
+  suggestedModelCol: string | null;
+  suggestedCodeCol: string | null;
+  suggestedQtyCol: string | null;
+  matchedItems: EntryOrderMatchedItem[];
+  unmatchedRows: EntryOrderUnmatchedRow[];
+  skippedZeroCount: number;
+}
+
+export type AIAvailabilityStatus = "AVAILABLE" | "IN_USE" | "UNAVAILABLE";
+
+export interface AIAssistantHolder {
+  collaboratorId: string;
+  collaboratorName: string;
+  role: UserRole;
+  quantity: number;
+}
+
+export interface AIAssistantMatchItem {
+  productId: string;
+  sku: string;
+  name: string;
+  category: string;
+  weightGrams: number | null;
+  unit: string;
+  availability: AIAvailabilityStatus;
+  freeStock: number;
+  inUseTotal: number;
+  holders: AIAssistantHolder[];
+}
+
+export interface AIAssistantResponse {
+  answer: string;
+  intent: "MODEL_QUERY" | "CUSTODY_OVERVIEW" | "STOCK_OVERVIEW" | "UNKNOWN";
+  matches: AIAssistantMatchItem[];
+  timestamp: string;
 }

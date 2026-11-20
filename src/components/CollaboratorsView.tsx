@@ -1,12 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { Check, Pencil, Plus, Search, UserCheck, UserX, Users, X } from "lucide-react";
+import { Check, Lock, Pencil, Plus, Search, UserCheck, UserX, Users, X } from "lucide-react";
 import { useInventoryUI } from "@/components/AppShell";
-import type { CollaboratorDTO } from "@/types/inventory";
+import { RoleBadge } from "@/components/StatusBadge";
+import type { CollaboratorDTO, UserRole } from "@/types/inventory";
 
 export function CollaboratorsView() {
-  const { refreshKey, triggerRefresh, showToast } = useInventoryUI();
+  const { activeActor, refreshKey, triggerRefresh, showToast } = useInventoryUI();
+  const isManager = activeActor?.role === "MANAGER";
 
   const [collaborators, setCollaborators] = useState<CollaboratorDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,21 +19,27 @@ export function CollaboratorsView() {
   const [name, setName] = useState("");
   const [department, setDepartment] = useState("");
   const [badgeCode, setBadgeCode] = useState("");
+  const [role, setRole] = useState<UserRole>("EMPLOYEE");
   const [creating, setCreating] = useState(false);
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editDept, setEditDept] = useState("");
   const [editBadge, setEditBadge] = useState("");
+  const [editRole, setEditRole] = useState<UserRole>("EMPLOYEE");
 
   const loadCollaborators = useCallback(async () => {
+    if (!isManager) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(
         `/api/collaborators?includeInactive=${includeInactive ? "true" : "false"}`,
         { cache: "no-store" }
       );
-      if (!res.ok) throw new Error("Falha ao carregar colaboradores.");
+      if (!res.ok) throw new Error("Falha ao carregar usuários.");
       const json = (await res.json()) as { collaborators: CollaboratorDTO[] };
       setCollaborators(json.collaborators);
     } catch (err) {
@@ -38,11 +47,31 @@ export function CollaboratorsView() {
     } finally {
       setLoading(false);
     }
-  }, [includeInactive, showToast]);
+  }, [includeInactive, showToast, isManager]);
 
   useEffect(() => {
     void loadCollaborators();
   }, [loadCollaborators, refreshKey]);
+
+  if (!isManager) {
+    return (
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
+        <Lock className="mx-auto h-10 w-10 text-amber-600" />
+        <h2 className="mt-3 text-lg font-bold text-amber-950">
+          Gestão de equipe restrita ao Gestor (Luiz)
+        </h2>
+        <p className="mt-1 text-sm text-amber-800">
+          Apenas o Dono/Gestor pode cadastrar ou alterar perfis de acesso.
+        </p>
+        <Link
+          href="/"
+          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
+        >
+          Voltar ao Catálogo de Volantes
+        </Link>
+      </div>
+    );
+  }
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,15 +84,17 @@ export function CollaboratorsView() {
           name: name.trim(),
           department: department.trim() || null,
           badgeCode: badgeCode.trim() || null,
+          role,
         }),
       });
       const json = (await res.json()) as { collaborator?: CollaboratorDTO; error?: string };
-      if (!res.ok) throw new Error(json.error ?? "Erro ao cadastrar colaborador.");
+      if (!res.ok) throw new Error(json.error ?? "Erro ao cadastrar usuário.");
 
       setName("");
       setDepartment("");
       setBadgeCode("");
-      showToast(`Colaborador ${json.collaborator?.name} cadastrado.`);
+      setRole("EMPLOYEE");
+      showToast(`Usuário ${json.collaborator?.name} cadastrado.`);
       triggerRefresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Erro ao cadastrar.", "error");
@@ -77,6 +108,7 @@ export function CollaboratorsView() {
     setEditName(c.name);
     setEditDept(c.department ?? "");
     setEditBadge(c.badgeCode ?? "");
+    setEditRole(c.role);
   };
 
   const saveEditing = async (id: string) => {
@@ -88,12 +120,13 @@ export function CollaboratorsView() {
           name: editName.trim(),
           department: editDept.trim() || null,
           badgeCode: editBadge.trim() || null,
+          role: editRole,
         }),
       });
       const json = (await res.json()) as { error?: string };
-      if (!res.ok) throw new Error(json.error ?? "Erro ao atualizar colaborador.");
+      if (!res.ok) throw new Error(json.error ?? "Erro ao atualizar usuário.");
       setEditingId(null);
-      showToast("Dados do colaborador atualizados.");
+      showToast("Dados e permissões atualizados.");
       triggerRefresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Erro ao atualizar.", "error");
@@ -129,38 +162,46 @@ export function CollaboratorsView() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Colaboradores & Responsáveis
+          Equipe & Perfis de Acesso
         </h1>
         <p className="text-sm text-slate-500">
-          Gerencie quem pode retirar itens no almoxarifado ou registrar recebimentos de pedidos.
+          Gerencie o perfil de Dono/Gestor (Luiz) e dos Funcionários (Mauro, Jean, Guilherme, Carlinho).
         </p>
       </div>
 
       {/* Add Form */}
       <form
         onSubmit={handleCreate}
-        className="grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-4"
+        className="grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-5"
       >
         <input
           type="text"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Nome completo *"
+          placeholder="Nome *"
           className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
         />
+        <select
+          value={role}
+          onChange={(e) => setRole(e.target.value as UserRole)}
+          className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium outline-none focus:border-blue-500"
+        >
+          <option value="EMPLOYEE">Funcionário</option>
+          <option value="MANAGER">Dono / Gestor</option>
+        </select>
         <input
           type="text"
           value={department}
           onChange={(e) => setDepartment(e.target.value)}
-          placeholder="Setor / Cargo (ex: Manutenção)"
+          placeholder="Setor / Cargo"
           className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
         />
         <input
           type="text"
           value={badgeCode}
           onChange={(e) => setBadgeCode(e.target.value)}
-          placeholder="Matrícula / Código (opcional)"
+          placeholder="Código (opcional)"
           className="rounded-xl border border-slate-300 px-3 py-2 font-mono text-sm uppercase outline-none focus:border-blue-500"
         />
         <button
@@ -181,7 +222,7 @@ export function CollaboratorsView() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar colaborador por nome, setor ou matrícula..."
+            placeholder="Buscar usuário por nome, setor ou código..."
             className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
           />
         </div>
@@ -198,23 +239,24 @@ export function CollaboratorsView() {
 
       {loading ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-          Carregando colaboradores...
+          Carregando usuários...
         </div>
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
           <Users className="mx-auto h-10 w-10 text-slate-300" />
           <p className="mt-2 text-base font-semibold text-slate-800">
-            Nenhum colaborador encontrado
+            Nenhum usuário encontrado
           </p>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-[640px] w-full border-collapse text-left text-sm">
+          <table className="min-w-[700px] w-full border-collapse text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase text-slate-500">
               <tr>
                 <th className="px-4 py-3">Nome</th>
+                <th className="px-4 py-3">Perfil</th>
                 <th className="px-4 py-3">Setor / Cargo</th>
-                <th className="px-4 py-3">Matrícula</th>
+                <th className="px-4 py-3">Código</th>
                 <th className="px-4 py-3 text-right">Movimentações</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3 text-right">Ações</th>
@@ -235,6 +277,20 @@ export function CollaboratorsView() {
                         />
                       ) : (
                         collab.name
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {isEditing ? (
+                        <select
+                          value={editRole}
+                          onChange={(e) => setEditRole(e.target.value as UserRole)}
+                          className="rounded-lg border border-slate-300 px-2 py-1 text-xs font-semibold"
+                        >
+                          <option value="EMPLOYEE">Funcionário</option>
+                          <option value="MANAGER">Dono / Gestor</option>
+                        </select>
+                      ) : (
+                        <RoleBadge role={collab.role} />
                       )}
                     </td>
                     <td className="px-4 py-3 text-slate-600">
