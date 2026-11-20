@@ -13,10 +13,10 @@ import {
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
-  Boxes,
   CheckCircle2,
   FileSpreadsheet,
   History,
+  LayoutGrid,
   Menu,
   Package,
   RotateCcw,
@@ -26,10 +26,12 @@ import {
   X,
 } from "lucide-react";
 import { AIAssistantWidget } from "@/components/AIAssistantWidget";
+import { BrandLogo } from "@/components/BrandLogo";
 import { ProductFormModal } from "@/components/ProductFormModal";
 import { QuickEntryModal } from "@/components/QuickEntryModal";
 import { QuickReturnModal } from "@/components/QuickReturnModal";
 import { QuickWithdrawalModal } from "@/components/QuickWithdrawalModal";
+import { RoleBadge } from "@/components/StatusBadge";
 import type { CollaboratorDTO, ProductDTO } from "@/types/inventory";
 
 interface ToastMessage {
@@ -70,16 +72,17 @@ function writeActorCookie(actorId: string) {
 }
 
 const ALL_NAV_ITEMS = [
-  { href: "/", label: "Catálogo de Volantes", icon: Package, managerOnly: false },
+  { href: "/", label: "Catálogo", icon: Package, managerOnly: false },
   { href: "/entradas", label: "Entradas & Pedidos", icon: ArrowDownToLine, managerOnly: true },
-  { href: "/movimentacoes", label: "Relatórios & Auditoria", icon: History, managerOnly: true },
+  { href: "/movimentacoes", label: "Relatórios & Histórico", icon: History, managerOnly: true },
   { href: "/importacao", label: "Importar Excel", icon: FileSpreadsheet, managerOnly: true },
-  { href: "/colaboradores", label: "Equipe & Perfis", icon: Users, managerOnly: true },
+  { href: "/colaboradores", label: "Equipe", icon: Users, managerOnly: true },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [collaborators, setCollaborators] = useState<CollaboratorDTO[]>([]);
@@ -157,8 +160,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       if (typeof window !== "undefined") {
         localStorage.setItem(ACTOR_STORAGE_KEY, found.id);
       }
+      setProfileModalOpen(false);
       showToast(
-        `Perfil ativo alterado para ${found.name} (${found.role === "MANAGER" ? "Dono / Gestor" : "Funcionário"}).`
+        `Acesso ativo: ${found.name} (${found.role === "MANAGER" ? "Dono / Gestor" : "Funcionário"}).`
       );
       triggerRefresh();
     },
@@ -219,32 +223,22 @@ export function AppShell({ children }: { children: ReactNode }) {
         showToast,
       }}
     >
-      <div className="min-h-screen bg-slate-50 pb-24 md:pb-12">
-        {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:px-6">
+      <div className="min-h-screen bg-[#F8F9FA] pb-24 text-[#111111] md:pb-12">
+        {/* Top Brand Header — Vibrant Yellow #FFD700 + Solid Black #111111 */}
+        <header className="sticky top-0 z-30 border-b-2 border-[#111111] bg-[#FFD700] shadow-sm">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
             <div className="flex items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen((v) => !v)}
-                className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 md:hidden"
+                className="rounded-lg border border-[#111111]/30 bg-white/80 p-2 text-[#111111] hover:bg-white md:hidden"
                 aria-label="Menu"
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
 
-              <Link href="/" className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm">
-                  <Boxes className="h-5 w-5" />
-                </div>
-                <div>
-                  <span className="block text-base font-bold leading-tight text-slate-900">
-                    StockFlow
-                  </span>
-                  <span className="block text-[11px] font-medium text-slate-500">
-                    Estoque de Volantes
-                  </span>
-                </div>
+              <Link href="/" className="shrink-0">
+                <BrandLogo size="sm" showSubtitle darkText />
               </Link>
             </div>
 
@@ -257,10 +251,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition xl:px-3 xl:text-sm ${
+                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold transition xl:text-sm ${
                       active
-                        ? "bg-blue-50 text-blue-700"
-                        : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                        ? "bg-[#111111] text-[#FFD700] shadow-sm"
+                        : "text-[#111111] hover:bg-[#111111]/10"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -270,26 +264,20 @@ export function AppShell({ children }: { children: ReactNode }) {
               })}
             </nav>
 
-            {/* User Profile Switcher + Quick Actions */}
+            {/* User Switcher + Quick Operational CTAs */}
             <div className="flex items-center gap-2">
               {collaborators.length > 0 && (
-                <div
-                  className={`flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-xs font-semibold ${
-                    isManager
-                      ? "border-blue-200 bg-blue-50/70 text-blue-900"
-                      : "border-slate-200 bg-slate-100 text-slate-800"
-                  }`}
-                >
+                <div className="flex items-center gap-1 rounded-lg border-2 border-[#111111] bg-white px-2 py-1 shadow-sm">
                   {isManager ? (
-                    <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-blue-600" />
+                    <ShieldCheck className="h-4 w-4 shrink-0 text-[#009C3B]" />
                   ) : (
-                    <User className="h-3.5 w-3.5 shrink-0 text-slate-600" />
+                    <User className="h-4 w-4 shrink-0 text-[#111111]" />
                   )}
                   <select
                     aria-label="Usuário ativo"
                     value={activeActor?.id ?? ""}
                     onChange={(e) => switchActor(e.target.value)}
-                    className="bg-transparent text-xs font-bold outline-none"
+                    className="bg-transparent text-xs font-extrabold text-[#111111] outline-none"
                   >
                     {collaborators.map((c) => (
                       <option key={c.id} value={c.id}>
@@ -297,6 +285,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                       </option>
                     ))}
                   </select>
+                  <button
+                    type="button"
+                    onClick={() => setProfileModalOpen(true)}
+                    className="hidden rounded bg-[#111111] p-1 text-[#FFD700] hover:bg-zinc-800 sm:inline-flex"
+                    title="Abrir seletor de acesso rápido"
+                    aria-label="Abrir seletor de acesso"
+                  >
+                    <LayoutGrid className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               )}
 
@@ -305,7 +302,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <button
                     type="button"
                     onClick={() => openEntryModal()}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-100"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-[#009C3B] px-3 py-2 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#008230]"
                   >
                     <ArrowDownToLine className="h-3.5 w-3.5" />
                     Entrada
@@ -314,15 +311,15 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={() => openReturnModal()}
-                  className="inline-flex items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-bold text-sky-700 hover:bg-sky-100"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-white px-3 py-2 text-xs font-extrabold text-[#111111] shadow-sm transition hover:bg-[#F8F9FA]"
                 >
-                  <RotateCcw className="h-3.5 w-3.5" />
+                  <RotateCcw className="h-3.5 w-3.5 text-[#D97706]" />
                   Devolver
                 </button>
                 <button
                   type="button"
                   onClick={() => openWithdrawalModal()}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-orange-700"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-[#DC2626] px-3.5 py-2 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#B91C1C]"
                 >
                   <ArrowUpFromLine className="h-3.5 w-3.5" />
                   Retirar
@@ -331,8 +328,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* Tablet nav row when between md and lg */}
-          <div className="hidden border-t border-slate-100 px-4 py-1.5 md:flex lg:hidden">
+          {/* Tablet nav row */}
+          <div className="hidden border-t border-[#111111]/20 bg-[#FFDE00] px-4 py-1.5 md:flex lg:hidden">
             <nav className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto">
               {visibleNavItems.map((item) => {
                 const Icon = item.icon;
@@ -341,8 +338,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold ${
-                      active ? "bg-blue-50 text-blue-700" : "text-slate-600 hover:bg-slate-100"
+                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-extrabold ${
+                      active
+                        ? "bg-[#111111] text-[#FFD700]"
+                        : "text-[#111111] hover:bg-[#111111]/10"
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
@@ -355,7 +354,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           {/* Mobile Drawer Menu */}
           {mobileMenuOpen && (
-            <nav className="border-t border-slate-200 bg-white px-4 py-2 md:hidden">
+            <nav className="border-t-2 border-[#111111] bg-white px-4 py-2.5 md:hidden">
               <div className="grid grid-cols-1 gap-1">
                 {visibleNavItems.map((item) => {
                   const Icon = item.icon;
@@ -364,10 +363,10 @@ export function AppShell({ children }: { children: ReactNode }) {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold ${
+                      className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-bold ${
                         active
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-slate-700 hover:bg-slate-100"
+                          ? "bg-[#111111] text-[#FFD700]"
+                          : "text-[#111111] hover:bg-[#F8F9FA]"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -375,6 +374,17 @@ export function AppShell({ children }: { children: ReactNode }) {
                     </Link>
                   );
                 })}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setProfileModalOpen(true);
+                  }}
+                  className="mt-1 flex items-center gap-2.5 rounded-lg border border-[#111111]/20 bg-[#F8F9FA] px-3 py-2.5 text-sm font-bold text-[#111111]"
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                  Trocar Perfil de Acesso
+                </button>
               </div>
             </nav>
           )}
@@ -385,20 +395,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           {actorReady ? (
             children
           ) : (
-            <div className="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500">
-              Carregando perfil de acesso...
+            <div className="rounded-xl border border-zinc-300 bg-white p-10 text-center text-sm font-semibold text-zinc-600">
+              Carregando sistema Grupo Volantes Vitória...
             </div>
           )}
         </main>
 
         {/* Mobile Sticky Action Bar */}
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 p-3 backdrop-blur md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t-2 border-[#FFD700] bg-[#111111] p-3 md:hidden">
           <div className="mx-auto flex max-w-md items-center gap-2">
             {isManager && (
               <button
                 type="button"
                 onClick={() => openEntryModal()}
-                className="flex flex-1 items-center justify-center gap-1 rounded-xl border border-emerald-300 bg-emerald-50 py-2.5 text-xs font-bold text-emerald-800 active:bg-emerald-100"
+                className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-[#009C3B] py-2.5 text-xs font-extrabold text-white active:bg-[#008230]"
               >
                 <ArrowDownToLine className="h-3.5 w-3.5" />
                 Entrada
@@ -407,7 +417,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => openReturnModal()}
-              className="flex flex-1 items-center justify-center gap-1 rounded-xl border border-sky-300 bg-sky-50 py-2.5 text-xs font-bold text-sky-800 active:bg-sky-100"
+              className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-[#FFD700] py-2.5 text-xs font-extrabold text-[#111111] active:bg-[#F2C900]"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Devolver
@@ -415,13 +425,67 @@ export function AppShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => openWithdrawalModal()}
-              className="flex flex-[1.2] items-center justify-center gap-1 rounded-xl bg-orange-600 py-2.5 text-xs font-bold text-white shadow-sm active:bg-orange-700"
+              className="flex flex-[1.2] items-center justify-center gap-1 rounded-lg bg-[#DC2626] py-2.5 text-xs font-extrabold text-white active:bg-[#B91C1C]"
             >
               <ArrowUpFromLine className="h-3.5 w-3.5" />
               Retirar
             </button>
           </div>
         </div>
+
+        {/* Branded Access / Profile Switcher Modal */}
+        {profileModalOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#111111]/65 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Selecionar perfil de acesso"
+          >
+            <div className="w-full max-w-md overflow-hidden rounded-xl border-2 border-[#111111] bg-white shadow-2xl">
+              <div className="flex items-center justify-between border-b-2 border-[#111111] bg-[#FFD700] px-5 py-4">
+                <BrandLogo size="md" showSubtitle darkText />
+                <button
+                  type="button"
+                  onClick={() => setProfileModalOpen(false)}
+                  className="rounded-lg p-1.5 text-[#111111] hover:bg-[#111111]/10"
+                  aria-label="Fechar"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="space-y-2.5 p-5">
+                <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                  Selecione quem está operando o sistema agora
+                </p>
+                {collaborators.map((c) => {
+                  const selected = c.id === activeActor?.id;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => switchActor(c.id)}
+                      className={`flex w-full items-center justify-between rounded-xl border-2 px-4 py-3 text-left transition ${
+                        selected
+                          ? "border-[#111111] bg-[#FFFBEB] shadow-sm"
+                          : "border-zinc-200 bg-white hover:border-[#111111]/50 hover:bg-[#F8F9FA]"
+                      }`}
+                    >
+                      <div>
+                        <div className="text-sm font-extrabold text-[#111111]">{c.name}</div>
+                        <div className="text-xs text-zinc-500">
+                          {c.role === "MANAGER"
+                            ? "Acesso administrativo completo, relatórios e IA"
+                            : "Acesso livre para retiradas e devoluções no seu nome"}
+                        </div>
+                      </div>
+                      <RoleBadge role={c.role} />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Global Modals */}
         <QuickWithdrawalModal
@@ -466,15 +530,15 @@ export function AppShell({ children }: { children: ReactNode }) {
             {toasts.map((toast) => (
               <div
                 key={toast.id}
-                className={`flex items-start gap-2.5 rounded-xl px-4 py-3 text-sm font-medium shadow-lg ring-1 ${
+                className={`flex items-start gap-2.5 rounded-xl border-2 px-4 py-3 text-sm font-bold shadow-xl ${
                   toast.variant === "error"
-                    ? "bg-rose-50 text-rose-900 ring-rose-200"
-                    : "bg-slate-900 text-white ring-slate-800"
+                    ? "border-[#DC2626] bg-[#FEF2F2] text-[#991B1B]"
+                    : "border-[#FFD700] bg-[#111111] text-white"
                 }`}
               >
                 <CheckCircle2
                   className={`mt-0.5 h-4 w-4 shrink-0 ${
-                    toast.variant === "error" ? "text-rose-600" : "text-emerald-400"
+                    toast.variant === "error" ? "text-[#DC2626]" : "text-[#FFD700]"
                   }`}
                 />
                 <span className="flex-1">{toast.text}</span>

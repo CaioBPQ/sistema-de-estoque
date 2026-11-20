@@ -6,18 +6,21 @@ const STOCK_STATUS_STYLES: Record<
 > = {
   OK: {
     label: "Disponível",
-    badgeClass: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20",
-    dotClass: "bg-emerald-500",
+    badgeClass:
+      "bg-[#ECFDF3] text-[#006B28] border border-[#009C3B]/40",
+    dotClass: "bg-[#009C3B]",
   },
   LOW: {
     label: "Estoque Baixo",
-    badgeClass: "bg-amber-50 text-amber-800 ring-1 ring-amber-600/25",
-    dotClass: "bg-amber-500",
+    badgeClass:
+      "bg-[#FEF3C7] text-[#111111] border border-[#D97706]",
+    dotClass: "bg-[#D97706]",
   },
   ZERO: {
-    label: "Zerado",
-    badgeClass: "bg-rose-50 text-rose-700 ring-1 ring-rose-600/25",
-    dotClass: "bg-rose-500",
+    label: "Indisponível",
+    badgeClass:
+      "bg-[#FEF2F2] text-[#991B1B] border border-[#DC2626]/40",
+    dotClass: "bg-[#DC2626]",
   },
 };
 
@@ -27,19 +30,23 @@ const MOVEMENT_TYPE_STYLES: Record<
 > = {
   ENTRY: {
     label: "Entrada",
-    badgeClass: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20",
+    badgeClass:
+      "bg-[#ECFDF3] text-[#006B28] border border-[#009C3B]/40",
   },
   EXIT: {
     label: "Retirada",
-    badgeClass: "bg-orange-50 text-orange-800 ring-1 ring-orange-600/25",
+    badgeClass:
+      "bg-[#FEF2F2] text-[#991B1B] border border-[#DC2626]/40",
   },
   RETURN: {
     label: "Devolução",
-    badgeClass: "bg-sky-50 text-sky-700 ring-1 ring-sky-600/20",
+    badgeClass:
+      "bg-[#FEF3C7] text-[#111111] border border-[#D97706]",
   },
   IMPORT: {
     label: "Importação",
-    badgeClass: "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-600/20",
+    badgeClass:
+      "bg-[#111111] text-[#FFD700] border border-[#111111]",
   },
 };
 
@@ -47,9 +54,9 @@ export function StockStatusBadge({ status }: { status: StockStatus }) {
   const cfg = STOCK_STATUS_STYLES[status];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${cfg.badgeClass}`}
+      className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-0.5 text-xs font-bold ${cfg.badgeClass}`}
     >
-      <span className={`h-1.5 w-1.5 rounded-full ${cfg.dotClass}`} />
+      <span className={`h-2 w-2 rounded-full ${cfg.dotClass}`} />
       {cfg.label}
     </span>
   );
@@ -59,7 +66,7 @@ export function MovementTypeBadge({ type }: { type: MovementType }) {
   const cfg = MOVEMENT_TYPE_STYLES[type];
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${cfg.badgeClass}`}
+      className={`inline-flex items-center rounded-lg px-2.5 py-0.5 text-xs font-bold ${cfg.badgeClass}`}
     >
       {cfg.label}
     </span>
@@ -70,10 +77,10 @@ export function RoleBadge({ role }: { role: UserRole }) {
   const isManager = role === "MANAGER";
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold ${
+      className={`inline-flex items-center rounded-lg px-2 py-0.5 text-[11px] font-bold ${
         isManager
-          ? "bg-blue-50 text-blue-700 ring-1 ring-blue-600/20"
-          : "bg-slate-100 text-slate-700 ring-1 ring-slate-300"
+          ? "bg-[#111111] text-[#FFD700]"
+          : "bg-[#FFD700] text-[#111111] border border-[#111111]/30"
       }`}
     >
       {isManager ? "Dono / Gestor" : "Funcionário"}

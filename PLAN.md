@@ -159,6 +159,14 @@
   - **Agente responsável:** Gemini 4 Hydrogen
   - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
 
+### Fase 4 — Identidade Visual "Grupo Volantes Vitória" (UI/UX Redesign)
+
+- [x] **Tarefa 14 (Design System, Logo e Reestilização Completa Grupo Volantes Vitória):**
+  - **O que fazer:** Aplicar a identidade visual da marca **Grupo Volantes Vitória** (`#FFD700`/`#FFDE00` amarelo primário com texto preto `#111111`, `#FFFFFF`/`#F8F9FA` superfícies, `#009C3B` disponível/entrada, `#D97706` em uso com texto escuro, `#DC2626` indisponível/saída) mantendo 100% das regras de negócio intactas. Integrar o logotipo oficial em `public/brand/grupo-volantes-vitoria.jpg` + `BrandLogo.tsx`, atualizar `tailwind.config.ts`, `globals.css`, `layout.tsx`, `AppShell.tsx` (topo/navegação e modal de troca rápida de perfil com logo em destaque), `StatusBadge.tsx`, `CatalogDashboard.tsx`, `EntriesHistoryView.tsx`, `AuditTimelineView.tsx`, `ExcelImportView.tsx`, `CollaboratorsView.tsx`, `AIAssistantWidget.tsx` e os modais (`QuickWithdrawalModal`, `QuickReturnModal`, `QuickEntryModal`, `ProductFormModal`) com cabeçalhos de tabela de alto contraste (preto + amarelo/branco), linhas alternadas e contraste WCAG estrito.
+  - **Arquivos exclusivos:** `public/brand/grupo-volantes-vitoria.jpg`, `tailwind.config.ts`, `src/app/globals.css`, `src/app/layout.tsx`, `src/components/BrandLogo.tsx`, `src/components/AppShell.tsx`, `src/components/StatusBadge.tsx`, `src/components/CatalogDashboard.tsx`, `src/components/EntriesHistoryView.tsx`, `src/components/AuditTimelineView.tsx`, `src/components/ExcelImportView.tsx`, `src/components/CollaboratorsView.tsx`, `src/components/AIAssistantWidget.tsx`, `src/components/QuickWithdrawalModal.tsx`, `src/components/QuickReturnModal.tsx`, `src/components/QuickEntryModal.tsx`, `src/components/ProductFormModal.tsx`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
+
 ---
 
 ## 4. Parecer do Conselho dos Anciões (Preenchido por: Claude Opus 5.5 High — `@4-conselho.md`)
@@ -167,4 +175,4 @@
   - Nenhum pendente. Durante a auditoria e testes de concorrência, foi identificado e corrigido um deadlock de upgrade de leitura para escrita no SQLite sob múltiplas retiradas simultâneas (`runWithSqliteWriteLock` + validação prévia do colaborador antes de abrir `$transaction`), além de ajuste de fuso horário local no filtro por data e remoção de fetch externo do `next/font/google` no build.
 - **Sugestões Opcionais de Melhoria:**
   - Para uso em produção multi-instância no futuro, migrar o `datasource` do Prisma de SQLite para PostgreSQL mantendo os mesmos serviços e contratos.
-- **Veredito Final:** `APROVADO PARA COMMIT` (Fases 1, 2 e 3 validadas com 12/12 testes passando, RBAC ativo, devoluções rastreadas por posse, importação em lote no pedido e Assistente IA)
+- **Veredito Final:** `APROVADO PARA COMMIT` (Fases 1 a 4 validadas: 12/12 testes passando, build limpo e identidade visual Grupo Volantes Vitória com contraste WCAG aplicada)

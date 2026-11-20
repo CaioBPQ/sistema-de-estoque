@@ -66,17 +66,17 @@ export function EntriesHistoryView() {
 
   if (!isManager) {
     return (
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
-        <Lock className="mx-auto h-10 w-10 text-amber-600" />
-        <h2 className="mt-3 text-lg font-bold text-amber-950">
+      <div className="rounded-xl border-2 border-[#D97706] bg-[#FEF3C7] p-8 text-center">
+        <Lock className="mx-auto h-10 w-10 text-[#111111]" />
+        <h2 className="mt-3 text-lg font-extrabold text-[#111111]">
           Área exclusiva do Gestor (Luiz)
         </h2>
-        <p className="mt-1 text-sm text-amber-800">
+        <p className="mt-1 text-sm font-medium text-zinc-800">
           O perfil de Funcionário possui permissão para retiradas e devoluções no catálogo.
         </p>
         <Link
           href="/"
-          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
+          className="mt-4 inline-flex rounded-lg border border-[#111111] bg-[#FFD700] px-4 py-2 text-xs font-extrabold text-[#111111]"
         >
           Voltar ao Catálogo de Volantes
         </Link>
@@ -88,10 +88,10 @@ export function EntriesHistoryView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#111111]">
             Entradas & Pedidos de Compra
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm font-medium text-zinc-600">
             Registre chegadas de volantes manualmente ou importando uma planilha Excel em lote.
           </p>
         </div>
@@ -100,7 +100,7 @@ export function EntriesHistoryView() {
           <button
             type="button"
             onClick={() => openEntryModal()}
-            className="inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2.5 text-sm font-bold text-blue-700 hover:bg-blue-100"
+            className="inline-flex items-center gap-2 rounded-lg border border-[#111111] bg-[#FFD700] px-4 py-2.5 text-sm font-extrabold text-[#111111] shadow-sm hover:bg-[#F2C900]"
           >
             <FileSpreadsheet className="h-4 w-4" />
             Importar Excel no Pedido
@@ -108,7 +108,7 @@ export function EntriesHistoryView() {
           <button
             type="button"
             onClick={() => openEntryModal()}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700"
+            className="inline-flex items-center gap-2 rounded-lg border border-[#111111] bg-[#009C3B] px-4 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-[#008230]"
           >
             <PackagePlus className="h-4 w-4" />
             Registrar Nova Entrada
@@ -152,55 +152,55 @@ export function EntriesHistoryView() {
           {filteredEntries.map((entry) => (
             <div
               key={entry.id}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+              className="overflow-hidden rounded-xl border-2 border-[#111111] bg-white shadow-sm"
             >
-              <div className="flex flex-col gap-2 border-b border-slate-100 bg-slate-50/70 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-2 border-b-2 border-[#FFD700] bg-[#111111] px-5 py-3.5 text-white sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="text-base font-bold text-slate-900">{entry.supplier}</span>
+                  <span className="text-base font-extrabold text-[#FFD700]">{entry.supplier}</span>
                   {entry.referenceCode && (
-                    <span className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-0.5 font-mono text-xs font-semibold text-blue-700 ring-1 ring-blue-200">
+                    <span className="inline-flex items-center gap-1 rounded-lg bg-[#FFD700] px-2.5 py-0.5 font-mono text-xs font-extrabold text-[#111111]">
                       <FileText className="h-3 w-3" />
                       {entry.referenceCode}
                     </span>
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-zinc-200">
                   <span className="inline-flex items-center gap-1">
-                    <User className="h-3.5 w-3.5 text-slate-400" />
-                    Responsável: <strong className="text-slate-800">{entry.responsibleName}</strong>
+                    <User className="h-3.5 w-3.5 text-[#FFD700]" />
+                    Responsável: <strong className="text-white">{entry.responsibleName}</strong>
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5 text-slate-400" />
+                    <Calendar className="h-3.5 w-3.5 text-[#FFD700]" />
                     {formatDateTime(entry.receivedAt)}
                   </span>
                 </div>
               </div>
 
               {entry.notes && (
-                <div className="border-b border-slate-100 px-5 py-2 text-xs text-slate-600">
-                  <span className="font-semibold text-slate-700">Observação:</span> {entry.notes}
+                <div className="border-b border-zinc-200 bg-[#F8F9FA] px-5 py-2 text-xs text-zinc-700">
+                  <span className="font-bold text-[#111111]">Observação:</span> {entry.notes}
                 </div>
               )}
 
-              <div className="divide-y divide-slate-100 px-5">
+              <div className="divide-y divide-zinc-200">
                 {entry.items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between"
+                    className="flex flex-col gap-1 px-5 py-3 odd:bg-white even:bg-[#F8F9FA] sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div>
-                      <span className="font-semibold text-slate-900">{item.productName}</span>
-                      <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-slate-600">
+                      <span className="font-bold text-[#111111]">{item.productName}</span>
+                      <span className="ml-2 rounded border border-[#111111]/20 bg-[#FFD700]/40 px-1.5 py-0.5 font-mono text-[11px] font-extrabold text-[#111111]">
                         {item.productSku}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 text-sm">
-                      <span className="tabular-nums text-xs text-slate-500">
+                      <span className="tabular-nums text-xs font-medium text-zinc-600">
                         Saldo: {formatQuantity(item.previousStock, item.productUnit)} →{" "}
                         {formatQuantity(item.newStock, item.productUnit)}
                       </span>
-                      <span className="tabular-nums rounded-lg bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700 ring-1 ring-emerald-200">
+                      <span className="tabular-nums rounded-lg border border-[#009C3B]/40 bg-[#ECFDF3] px-2.5 py-1 text-xs font-extrabold text-[#006B28]">
                         +{formatQuantity(item.quantity, item.productUnit)}
                       </span>
                     </div>

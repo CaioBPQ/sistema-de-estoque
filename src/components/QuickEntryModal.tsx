@@ -270,25 +270,25 @@ export function QuickEntryModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/50 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-[#111111]/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="quick-entry-title"
     >
-      <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-2xl bg-white shadow-2xl sm:rounded-2xl">
-        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+      <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-xl border-2 border-[#111111] bg-white shadow-2xl sm:rounded-xl">
+        <div className="flex items-center justify-between border-b-2 border-[#FFD700] bg-[#111111] px-5 py-4 text-white">
           <div>
-            <h2 id="quick-entry-title" className="text-lg font-bold text-slate-900">
+            <h2 id="quick-entry-title" className="text-lg font-extrabold text-[#FFD700]">
               Registrar Entrada / Pedido de Compra
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-zinc-300">
               Adicione manualmente ou importe uma planilha Excel para preencher o pedido em lote.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+            className="rounded-lg p-2 text-zinc-300 hover:bg-white/10 hover:text-white"
             aria-label="Fechar"
           >
             <X className="h-5 w-5" />
@@ -373,7 +373,7 @@ export function QuickEntryModal({
                 Volantes do Pedido ({items.length})
               </span>
               <div className="flex flex-wrap items-center gap-2">
-                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100">
+                <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-[#111111] bg-[#FFD700] px-3 py-1.5 text-xs font-extrabold text-[#111111] shadow-sm hover:bg-[#F2C900]">
                   <FileSpreadsheet className="h-3.5 w-3.5" />
                   {importingExcel ? "Lendo planilha..." : "Importar Excel"}
                   <input
@@ -580,7 +580,7 @@ export function QuickEntryModal({
             <button
               type="submit"
               disabled={submitting || loadingData || products.length === 0 || !responsibleId}
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-[#111111] bg-[#009C3B] px-5 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-[#008230] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <CheckCircle2 className="h-4 w-4" />
               {submitting ? "Salvando entrada..." : `Confirmar Entrada (${items.length})`}

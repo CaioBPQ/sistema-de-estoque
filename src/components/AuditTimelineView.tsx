@@ -125,17 +125,17 @@ export function AuditTimelineView() {
 
   if (!isManager) {
     return (
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
-        <Lock className="mx-auto h-10 w-10 text-amber-600" />
-        <h2 className="mt-3 text-lg font-bold text-amber-950">
+      <div className="rounded-xl border-2 border-[#D97706] bg-[#FEF3C7] p-8 text-center">
+        <Lock className="mx-auto h-10 w-10 text-[#111111]" />
+        <h2 className="mt-3 text-lg font-extrabold text-[#111111]">
           Relatórios administrativos restritos ao Gestor (Luiz)
         </h2>
-        <p className="mt-1 text-sm text-amber-800">
+        <p className="mt-1 text-sm font-medium text-zinc-800">
           O painel de entradas, saídas gerais e histórico por funcionário é exclusivo do Dono/Gestor.
         </p>
         <Link
           href="/"
-          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
+          className="mt-4 inline-flex rounded-lg border border-[#111111] bg-[#FFD700] px-4 py-2 text-xs font-extrabold text-[#111111]"
         >
           Voltar ao Catálogo de Volantes
         </Link>
@@ -159,17 +159,17 @@ export function AuditTimelineView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#111111]">
             Relatórios Gerais & Auditoria por Funcionário
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm font-medium text-zinc-600">
             Dashboard gerencial de entradas, retiradas, devoluções e posse atual de toda a equipe.
           </p>
         </div>
 
         <a
           href={exportUrl}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-[#111111] bg-[#FFD700] px-4 py-2 text-sm font-extrabold text-[#111111] shadow-sm hover:bg-[#F2C900]"
         >
           <Download className="h-4 w-4" />
           Exportar CSV Filtrado
@@ -180,48 +180,58 @@ export function AuditTimelineView() {
       {report && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <span className="text-[11px] font-bold uppercase text-emerald-700">Entradas</span>
-              <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">
+            <div className="rounded-xl border-2 border-[#009C3B]/40 bg-white p-4 shadow-sm">
+              <span className="text-[11px] font-extrabold uppercase text-[#006B28]">Entradas</span>
+              <p className="tabular-nums mt-1 text-2xl font-extrabold text-[#006B28]">
                 +{formatQuantity(report.totals.enteredUnits)}
               </p>
-              <p className="text-xs text-slate-500">{report.totals.entriesCount} lançamentos</p>
+              <p className="text-xs font-medium text-zinc-600">
+                {report.totals.entriesCount} lançamentos
+              </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <span className="text-[11px] font-bold uppercase text-orange-700">Retiradas</span>
-              <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">
+            <div className="rounded-xl border-2 border-[#DC2626]/40 bg-white p-4 shadow-sm">
+              <span className="text-[11px] font-extrabold uppercase text-[#DC2626]">Retiradas</span>
+              <p className="tabular-nums mt-1 text-2xl font-extrabold text-[#DC2626]">
                 -{formatQuantity(report.totals.withdrawnUnits)}
               </p>
-              <p className="text-xs text-slate-500">{report.totals.withdrawalsCount} saídas</p>
+              <p className="text-xs font-medium text-zinc-600">
+                {report.totals.withdrawalsCount} saídas
+              </p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <span className="text-[11px] font-bold uppercase text-sky-700">Devoluções</span>
-              <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">
+            <div className="rounded-xl border-2 border-zinc-300 bg-white p-4 shadow-sm">
+              <span className="text-[11px] font-extrabold uppercase text-zinc-700">Devoluções</span>
+              <p className="tabular-nums mt-1 text-2xl font-extrabold text-[#111111]">
                 +{formatQuantity(report.totals.returnedUnits)}
               </p>
-              <p className="text-xs text-slate-500">{report.totals.returnsCount} retornos</p>
+              <p className="text-xs font-medium text-zinc-600">
+                {report.totals.returnsCount} retornos
+              </p>
             </div>
-            <div className="rounded-2xl border border-sky-200 bg-sky-50/70 p-4 shadow-sm">
-              <span className="text-[11px] font-bold uppercase text-sky-800">Em Uso na Equipe</span>
-              <p className="tabular-nums mt-1 text-2xl font-bold text-sky-900">
+            <div className="rounded-xl border-2 border-[#D97706] bg-[#FEF3C7]/60 p-4 shadow-sm">
+              <span className="text-[11px] font-extrabold uppercase text-[#111111]">
+                Em Uso na Equipe
+              </span>
+              <p className="tabular-nums mt-1 text-2xl font-extrabold text-[#111111]">
                 {formatQuantity(report.totals.totalInUseUnits)}
               </p>
-              <p className="text-xs text-sky-700">Em posse no momento</p>
+              <p className="text-xs font-bold text-[#92400E]">Em posse no momento</p>
             </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-              <span className="text-[11px] font-bold uppercase text-slate-600">Livres no Estoque</span>
-              <p className="tabular-nums mt-1 text-2xl font-bold text-slate-900">
+            <div className="rounded-xl border-2 border-[#111111] bg-[#FFD700] p-4 shadow-sm">
+              <span className="text-[11px] font-extrabold uppercase text-[#111111]">
+                Livres no Estoque
+              </span>
+              <p className="tabular-nums mt-1 text-2xl font-extrabold text-[#111111]">
                 {formatQuantity(report.totals.totalFreeUnits)}
               </p>
-              <p className="text-xs text-slate-500">Disponíveis agora</p>
+              <p className="text-xs font-bold text-[#111111]/80">Disponíveis agora</p>
             </div>
           </div>
 
           {/* Per-Employee Report */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="rounded-xl border border-zinc-300 bg-white p-4 shadow-sm">
             <div className="mb-3 flex items-center gap-2">
-              <Users className="h-4 w-4 text-blue-600" />
-              <h2 className="text-sm font-bold text-slate-900">
+              <Users className="h-4 w-4 text-[#111111]" />
+              <h2 className="text-sm font-extrabold text-[#111111]">
                 Movimentações e Posse Atual por Usuário (clique para filtrar histórico)
               </h2>
             </div>
@@ -238,38 +248,38 @@ export function AuditTimelineView() {
                       );
                       setPage(1);
                     }}
-                    className={`rounded-xl border p-3 text-left transition ${
+                    className={`rounded-xl border-2 p-3 text-left transition ${
                       selected
-                        ? "border-blue-500 bg-blue-50/60 ring-2 ring-blue-500/20"
-                        : "border-slate-200 hover:border-slate-300"
+                        ? "border-[#111111] bg-[#FFFBEB] shadow-sm"
+                        : "border-zinc-200 hover:border-[#111111]/50"
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1">
-                      <span className="font-bold text-slate-900">{emp.collaboratorName}</span>
+                      <span className="font-extrabold text-[#111111]">{emp.collaboratorName}</span>
                       <RoleBadge role={emp.role} />
                     </div>
                     <div className="mt-2 grid grid-cols-3 gap-1 text-[11px]">
                       <div>
-                        <span className="block text-slate-400">Retirou</span>
-                        <strong className="tabular-nums text-orange-700">
+                        <span className="block text-zinc-500">Retirou</span>
+                        <strong className="tabular-nums text-[#DC2626]">
                           {formatQuantity(emp.withdrawnUnits)}
                         </strong>
                       </div>
                       <div>
-                        <span className="block text-slate-400">Devolveu</span>
-                        <strong className="tabular-nums text-sky-700">
+                        <span className="block text-zinc-500">Devolveu</span>
+                        <strong className="tabular-nums text-[#006B28]">
                           {formatQuantity(emp.returnedUnits)}
                         </strong>
                       </div>
                       <div>
-                        <span className="block text-slate-400">Em uso</span>
-                        <strong className="tabular-nums text-slate-900">
+                        <span className="block text-zinc-500">Em uso</span>
+                        <strong className="tabular-nums text-[#111111]">
                           {formatQuantity(emp.inUseUnits)}
                         </strong>
                       </div>
                     </div>
                     {emp.activeCustodies.length > 0 && (
-                      <div className="mt-2 border-t border-slate-100 pt-1.5 text-[10px] text-slate-600">
+                      <div className="mt-2 border-t border-zinc-200 pt-1.5 text-[10px] font-bold text-zinc-700">
                         {emp.activeCustodies
                           .slice(0, 2)
                           .map((c) => `${c.productSku} (${c.quantity})`)
@@ -412,9 +422,9 @@ export function AuditTimelineView() {
         </div>
       ) : (
         <>
-          <div className="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm md:block">
+          <div className="hidden overflow-hidden rounded-xl border-2 border-[#111111] bg-white shadow-sm md:block">
             <table className="w-full border-collapse text-left text-sm">
-              <thead className="border-b border-slate-200 bg-slate-50/80 text-xs font-bold uppercase tracking-wide text-slate-500">
+              <thead className="bg-[#111111] text-xs font-extrabold uppercase tracking-wider text-[#FFD700]">
                 <tr>
                   <th className="px-4 py-3">Data / Hora</th>
                   <th className="px-4 py-3">Tipo</th>
@@ -425,46 +435,51 @@ export function AuditTimelineView() {
                   <th className="px-4 py-3">Motivo / Ref.</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-zinc-200">
                 {movements.map((m) => (
-                  <tr key={m.id} className="hover:bg-slate-50/70">
-                    <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-600">
+                  <tr
+                    key={m.id}
+                    className="odd:bg-white even:bg-[#F8F9FA] hover:bg-[#FFFBEB]"
+                  >
+                    <td className="whitespace-nowrap px-4 py-3 text-xs font-medium text-zinc-600">
                       {formatDateTime(m.createdAt)}
                     </td>
                     <td className="px-4 py-3">
                       <MovementTypeBadge type={m.type} />
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-semibold text-slate-900">{m.productName}</div>
-                      <span className="font-mono text-[11px] text-slate-500">{m.productSku}</span>
+                      <div className="font-bold text-[#111111]">{m.productName}</div>
+                      <span className="font-mono text-[11px] font-bold text-zinc-600">
+                        {m.productSku}
+                      </span>
                     </td>
                     <td
-                      className={`tabular-nums px-4 py-3 text-right font-bold ${
+                      className={`tabular-nums px-4 py-3 text-right font-extrabold ${
                         m.type === "EXIT"
-                          ? "text-orange-700"
+                          ? "text-[#DC2626]"
                           : m.type === "RETURN"
-                            ? "text-sky-700"
-                            : "text-emerald-700"
+                            ? "text-[#B45309]"
+                            : "text-[#006B28]"
                       }`}
                     >
                       {m.type === "EXIT" ? "-" : "+"}
                       {formatQuantity(m.quantity, m.productUnit)}
                     </td>
-                    <td className="tabular-nums px-4 py-3 text-right text-xs text-slate-600">
+                    <td className="tabular-nums px-4 py-3 text-right text-xs text-zinc-600">
                       {formatQuantity(m.previousStock)} →{" "}
-                      <strong className="text-slate-900">
+                      <strong className="text-[#111111]">
                         {formatQuantity(m.newStock, m.productUnit)}
                       </strong>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="font-medium text-slate-800">
+                      <div className="font-bold text-[#111111]">
                         {m.collaboratorName ?? "Sistema / Importação"}
                       </div>
                       {m.collaboratorDepartment && (
-                        <div className="text-xs text-slate-500">{m.collaboratorDepartment}</div>
+                        <div className="text-xs text-zinc-500">{m.collaboratorDepartment}</div>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-xs text-slate-600">
+                    <td className="px-4 py-3 text-xs text-zinc-600">
                       {m.reason ?? m.purchaseReference ?? "—"}
                     </td>
                   </tr>

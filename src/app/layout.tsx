@@ -3,9 +3,9 @@ import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  title: "StockFlow — Controle de Estoque de Volantes",
+  title: "Grupo Volantes Vitória — Controle de Estoque",
   description:
-    "Sistema web exclusivo para controle de estoque de volantes, entradas, retiradas rápidas com rastreabilidade e importação Excel.",
+    "Sistema web de controle de estoque do Grupo Volantes Vitória: catálogo por montadora, entradas, retiradas, devoluções e assistente IA.",
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className="font-sans antialiased">
+      <body className="bg-[#F8F9FA] font-sans text-[#111111] antialiased">
         <AppShell>{children}</AppShell>
       </body>
     </html>

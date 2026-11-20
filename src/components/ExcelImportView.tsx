@@ -168,17 +168,17 @@ export function ExcelImportView() {
 
   if (!isManager) {
     return (
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
-        <Lock className="mx-auto h-10 w-10 text-amber-600" />
-        <h2 className="mt-3 text-lg font-bold text-amber-950">
+      <div className="rounded-xl border-2 border-[#D97706] bg-[#FEF3C7] p-8 text-center">
+        <Lock className="mx-auto h-10 w-10 text-[#111111]" />
+        <h2 className="mt-3 text-lg font-extrabold text-[#111111]">
           Importação de planilhas restrita ao Gestor (Luiz)
         </h2>
-        <p className="mt-1 text-sm text-amber-800">
+        <p className="mt-1 text-sm font-medium text-zinc-800">
           Apenas o Dono/Gestor pode importar planilhas para o catálogo geral.
         </p>
         <Link
           href="/"
-          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
+          className="mt-4 inline-flex rounded-lg border border-[#111111] bg-[#FFD700] px-4 py-2 text-xs font-extrabold text-[#111111]"
         >
           Voltar ao Catálogo de Volantes
         </Link>
@@ -190,10 +190,10 @@ export function ExcelImportView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#111111]">
             Migração e Importação de Planilhas Excel
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm font-medium text-zinc-600">
             Suba sua planilha atual em `.xlsx` ou `.csv`, revise os saldos e migre para o banco em segundos.
           </p>
         </div>
@@ -201,16 +201,16 @@ export function ExcelImportView() {
         <div className="flex flex-wrap gap-2">
           <a
             href="/api/import?template=xlsx"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-[#FFD700] px-3.5 py-2 text-sm font-extrabold text-[#111111] hover:bg-[#F2C900]"
           >
-            <Download className="h-4 w-4 text-emerald-600" />
+            <Download className="h-4 w-4" />
             Modelo Excel (.xlsx)
           </a>
           <a
             href="/api/import?template=csv"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-white px-3.5 py-2 text-sm font-bold text-[#111111] hover:bg-[#F8F9FA]"
           >
-            <Download className="h-4 w-4 text-blue-600" />
+            <Download className="h-4 w-4" />
             Modelo CSV (.csv)
           </a>
         </div>
@@ -425,7 +425,7 @@ export function ExcelImportView() {
                 type="button"
                 disabled={committing || preview.validCount === 0}
                 onClick={() => void handleCommit()}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#111111] bg-[#FFD700] px-5 py-2.5 text-sm font-extrabold text-[#111111] shadow-sm hover:bg-[#F2C900] disabled:opacity-50"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 {committing
@@ -436,7 +436,7 @@ export function ExcelImportView() {
 
             <div className="max-h-96 overflow-auto">
               <table className="w-full border-collapse text-left text-xs">
-                <thead className="sticky top-0 border-b border-slate-200 bg-slate-50 font-bold uppercase text-slate-500">
+                <thead className="sticky top-0 bg-[#111111] font-extrabold uppercase tracking-wider text-[#FFD700]">
                   <tr>
                     <th className="px-3 py-2.5">Linha</th>
                     <th className="px-3 py-2.5">Código</th>

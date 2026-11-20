@@ -55,17 +55,17 @@ export function CollaboratorsView() {
 
   if (!isManager) {
     return (
-      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8 text-center">
-        <Lock className="mx-auto h-10 w-10 text-amber-600" />
-        <h2 className="mt-3 text-lg font-bold text-amber-950">
+      <div className="rounded-xl border-2 border-[#D97706] bg-[#FEF3C7] p-8 text-center">
+        <Lock className="mx-auto h-10 w-10 text-[#111111]" />
+        <h2 className="mt-3 text-lg font-extrabold text-[#111111]">
           Gestão de equipe restrita ao Gestor (Luiz)
         </h2>
-        <p className="mt-1 text-sm text-amber-800">
+        <p className="mt-1 text-sm font-medium text-zinc-800">
           Apenas o Dono/Gestor pode cadastrar ou alterar perfis de acesso.
         </p>
         <Link
           href="/"
-          className="mt-4 inline-flex rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-white"
+          className="mt-4 inline-flex rounded-lg border border-[#111111] bg-[#FFD700] px-4 py-2 text-xs font-extrabold text-[#111111]"
         >
           Voltar ao Catálogo de Volantes
         </Link>
@@ -207,7 +207,7 @@ export function CollaboratorsView() {
         <button
           type="submit"
           disabled={creating}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#111111] bg-[#FFD700] px-4 py-2 text-sm font-extrabold text-[#111111] hover:bg-[#F2C900] disabled:opacity-50"
         >
           <Plus className="h-4 w-4" />
           {creating ? "Adicionando..." : "Adicionar"}
@@ -249,9 +249,9 @@ export function CollaboratorsView() {
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border-2 border-[#111111] bg-white shadow-sm">
           <table className="min-w-[700px] w-full border-collapse text-left text-sm">
-            <thead className="border-b border-slate-200 bg-slate-50 text-xs font-bold uppercase text-slate-500">
+            <thead className="bg-[#111111] text-xs font-extrabold uppercase tracking-wider text-[#FFD700]">
               <tr>
                 <th className="px-4 py-3">Nome</th>
                 <th className="px-4 py-3">Perfil</th>
