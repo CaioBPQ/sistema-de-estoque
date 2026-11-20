@@ -1,5 +1,8 @@
 # Sistema Web de Controle de Estoque — Grupo Volantes Vitória
 
+> **Sistema Online (Acesso Direto):** [https://estoque-web-production.up.railway.app](https://estoque-web-production.up.railway.app)  
+> **Criação e Exportação de Pedidos (Excel):** [https://estoque-web-production.up.railway.app/pedidos](https://estoque-web-production.up.railway.app/pedidos)
+
 Aplicação full-stack para controle centralizado do estoque de volantes do **Grupo Volantes Vitória**, com catálogo oficial de 235 modelos, controle de retiradas e devoluções por colaborador, histórico auditável, importação de planilhas, assistente virtual de disponibilidade e módulo completo de **Criação e Exportação de Pedidos** usando o molde oficial `.xlsx`.
 
 ## Funcionalidades Principais
@@ -37,12 +40,10 @@ Aplicação full-stack para controle centralizado do estoque de volantes do **Gr
    ```
 4. Acesse [http://localhost:3000](http://localhost:3000).
 
-## Abrindo Direto pelo GitHub (Codespaces) ou Publicação Web
+## Deploy em Produção (Railway) e Desenvolvimento
 
-Como a aplicação utiliza API routes do Next.js, banco SQLite (Prisma) e manipulação binária `.xlsx` no servidor (`ExcelJS`), ela **não executa em hospedagem puramente estática** como o GitHub Pages sem adaptação de backend. Para abrir online:
-
-- **GitHub Codespaces (direto no GitHub):** Abra `<> Code` → `Codespaces` → `Create codespace on main`, execute `npm run setup && npm run dev` e abra a porta `3000` fornecida pelo próprio navegador.
-- **Publicação Contínua (Railway / Render / VPS Node):** Conecte este repositório como serviço Web Node.js (`npm install && npm run setup && npm run build` com start em `npm run start`).
+- **Acesso Online (Produção):** A aplicação está publicada continuamente no **Railway** em [https://estoque-web-production.up.railway.app](https://estoque-web-production.up.railway.app), com deploy automático a partir da branch `main` e volume persistente `/data` para o banco SQLite.
+- **GitHub Codespaces:** Também pode ser executada pelo botão `<> Code` → `Codespaces` → `Create codespace on main` rodando `npm run setup && npm run dev`.
 
 ## Comandos Úteis
 
