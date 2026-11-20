@@ -14,7 +14,7 @@ export function BrandLogo({
   const imgDimensions = size === "lg" ? 68 : size === "md" ? 48 : 42;
 
   return (
-    <div className="flex items-center gap-2.5">
+    <div className="flex min-w-0 items-center gap-2.5">
       <div
         className={`relative shrink-0 overflow-hidden rounded-xl border-2 border-[#111111] bg-[#FFD700] shadow-sm ${
           size === "lg"
@@ -33,9 +33,9 @@ export function BrandLogo({
           priority
         />
       </div>
-      <div className="leading-tight">
+      <div className="min-w-0 leading-tight">
         <span
-          className={`block font-extrabold tracking-tight ${
+          className={`block truncate font-extrabold tracking-tight ${
             size === "lg" ? "text-xl" : "text-sm sm:text-base"
           } ${darkText ? "text-[#111111]" : "text-white"}`}
         >
@@ -43,8 +43,8 @@ export function BrandLogo({
         </span>
         {showSubtitle && (
           <span
-            className={`block text-[11px] font-bold uppercase tracking-wider ${
-              darkText ? "text-[#111111]/75" : "text-[#FFD700]"
+            className={`block truncate text-[10px] font-bold uppercase tracking-wider sm:text-[11px] ${
+              darkText ? "text-[#111111]/80" : "text-[#FFD700]"
             }`}
           >
             Controle de Estoque

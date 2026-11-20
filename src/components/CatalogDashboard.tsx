@@ -231,7 +231,7 @@ export function CatalogDashboard() {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <button
           type="button"
           onClick={() => setStatusFilter("ALL")}
@@ -490,7 +490,7 @@ export function CatalogDashboard() {
         </div>
       ) : (
         <>
-          {/* Desktop Table — High Contrast Header (#111111 + #FFD700) & Zebra Stripes */}
+          {/* Desktop Table — High Contrast Header (#111111 + #FFD700) & Horizontal Scroll Safe */}
           <div className="hidden overflow-hidden rounded-xl border-2 border-[#111111] bg-white shadow-sm md:block">
             <div className="flex items-center justify-between border-b border-zinc-200 bg-[#F8F9FA] px-4 py-2 text-xs font-bold text-zinc-700">
               <span>
@@ -500,7 +500,8 @@ export function CatalogDashboard() {
                 Grupo Volantes Vitória
               </span>
             </div>
-            <table className="w-full border-collapse text-left text-sm">
+            <div className="overflow-x-auto">
+              <table className="min-w-[820px] w-full border-collapse text-left text-sm">
               <thead className="bg-[#111111] text-xs font-extrabold uppercase tracking-wider text-[#FFD700]">
                 <tr>
                   <th className="px-4 py-3">Código / Volante</th>
@@ -643,7 +644,8 @@ export function CatalogDashboard() {
                   );
                 })}
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
 
           {/* Mobile Cards */}

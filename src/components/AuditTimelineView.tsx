@@ -179,7 +179,7 @@ export function AuditTimelineView() {
       {/* General Report Summary */}
       {report && (
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <div className="rounded-xl border-2 border-[#009C3B]/40 bg-white p-4 shadow-sm">
               <span className="text-[11px] font-extrabold uppercase text-[#006B28]">Entradas</span>
               <p className="tabular-nums mt-1 text-2xl font-extrabold text-[#006B28]">
@@ -422,8 +422,8 @@ export function AuditTimelineView() {
         </div>
       ) : (
         <>
-          <div className="hidden overflow-hidden rounded-xl border-2 border-[#111111] bg-white shadow-sm md:block">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="hidden overflow-x-auto rounded-xl border-2 border-[#111111] bg-white shadow-sm md:block">
+            <table className="min-w-[820px] w-full border-collapse text-left text-sm">
               <thead className="bg-[#111111] text-xs font-extrabold uppercase tracking-wider text-[#FFD700]">
                 <tr>
                   <th className="px-4 py-3">Data / Hora</th>

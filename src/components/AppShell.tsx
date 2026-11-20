@@ -224,113 +224,93 @@ export function AppShell({ children }: { children: ReactNode }) {
       }}
     >
       <div className="min-h-screen bg-[#F8F9FA] pb-24 text-[#111111] md:pb-12">
-        {/* Top Brand Header — Vibrant Yellow #FFD700 + Solid Black #111111 */}
-        <header className="sticky top-0 z-30 border-b-2 border-[#111111] bg-[#FFD700] shadow-sm">
-          <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen((v) => !v)}
-                className="rounded-lg border border-[#111111]/30 bg-white/80 p-2 text-[#111111] hover:bg-white md:hidden"
-                aria-label="Menu"
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button>
+        {/* Top Brand Header — Two-row zoom-safe layout */}
+        <header className="sticky top-0 z-30 border-b-2 border-[#111111] shadow-sm">
+          {/* Row 1: Brand + Active Profile + Quick Operational CTAs */}
+          <div className="bg-[#FFD700]">
+            <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2.5 px-4 py-2.5 sm:px-6">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen((v) => !v)}
+                  className="shrink-0 rounded-lg border border-[#111111]/30 bg-white/85 p-2 text-[#111111] hover:bg-white md:hidden"
+                  aria-label="Menu"
+                >
+                  {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </button>
 
-              <Link href="/" className="shrink-0">
-                <BrandLogo size="sm" showSubtitle darkText />
-              </Link>
-            </div>
+                <Link href="/" className="min-w-0 shrink-0">
+                  <BrandLogo size="sm" showSubtitle darkText />
+                </Link>
+              </div>
 
-            {/* Desktop Navigation (1280px+) */}
-            <nav className="hidden items-center gap-1 xl:flex">
-              {visibleNavItems.map((item) => {
-                const Icon = item.icon;
-                const active = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-extrabold transition ${
-                      active
-                        ? "bg-[#111111] text-[#FFD700] shadow-sm"
-                        : "text-[#111111] hover:bg-[#111111]/10"
-                    }`}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
+              <div className="flex flex-wrap items-center gap-2">
+                {collaborators.length > 0 && (
+                  <div className="flex items-center gap-1 rounded-lg border-2 border-[#111111] bg-white px-2 py-1 shadow-sm">
+                    {isManager ? (
+                      <ShieldCheck className="h-4 w-4 shrink-0 text-[#009C3B]" />
+                    ) : (
+                      <User className="h-4 w-4 shrink-0 text-[#111111]" />
+                    )}
+                    <select
+                      aria-label="Usuário ativo"
+                      value={activeActor?.id ?? ""}
+                      onChange={(e) => switchActor(e.target.value)}
+                      className="bg-transparent text-xs font-extrabold text-[#111111] outline-none"
+                    >
+                      {collaborators.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ({c.role === "MANAGER" ? "Gestor" : "Funcionário"})
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setProfileModalOpen(true)}
+                      className="hidden rounded bg-[#111111] p-1 text-[#FFD700] hover:bg-zinc-800 sm:inline-flex"
+                      title="Abrir seletor de acesso rápido"
+                      aria-label="Abrir seletor de acesso"
+                    >
+                      <LayoutGrid className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                )}
 
-            {/* User Switcher + Quick Operational CTAs */}
-            <div className="flex items-center gap-2">
-              {collaborators.length > 0 && (
-                <div className="flex items-center gap-1 rounded-lg border-2 border-[#111111] bg-white px-2 py-1 shadow-sm">
-                  {isManager ? (
-                    <ShieldCheck className="h-4 w-4 shrink-0 text-[#009C3B]" />
-                  ) : (
-                    <User className="h-4 w-4 shrink-0 text-[#111111]" />
+                <div className="hidden flex-wrap items-center gap-1.5 md:flex">
+                  {isManager && (
+                    <button
+                      type="button"
+                      onClick={() => openEntryModal()}
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#111111] bg-[#009C3B] px-3 py-2 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#008230]"
+                    >
+                      <ArrowDownToLine className="h-3.5 w-3.5" />
+                      Entrada
+                    </button>
                   )}
-                  <select
-                    aria-label="Usuário ativo"
-                    value={activeActor?.id ?? ""}
-                    onChange={(e) => switchActor(e.target.value)}
-                    className="bg-transparent text-xs font-extrabold text-[#111111] outline-none"
-                  >
-                    {collaborators.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name} ({c.role === "MANAGER" ? "Gestor" : "Funcionário"})
-                      </option>
-                    ))}
-                  </select>
                   <button
                     type="button"
-                    onClick={() => setProfileModalOpen(true)}
-                    className="hidden rounded bg-[#111111] p-1 text-[#FFD700] hover:bg-zinc-800 sm:inline-flex"
-                    title="Abrir seletor de acesso rápido"
-                    aria-label="Abrir seletor de acesso"
+                    onClick={() => openReturnModal()}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#111111] bg-white px-3 py-2 text-xs font-extrabold text-[#111111] shadow-sm transition hover:bg-[#F8F9FA]"
                   >
-                    <LayoutGrid className="h-3.5 w-3.5" />
+                    <RotateCcw className="h-3.5 w-3.5 text-[#D97706]" />
+                    Devolver
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openWithdrawalModal()}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#111111] bg-[#DC2626] px-3.5 py-2 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#B91C1C]"
+                  >
+                    <ArrowUpFromLine className="h-3.5 w-3.5" />
+                    Retirar
                   </button>
                 </div>
-              )}
-
-              <div className="hidden items-center gap-1.5 md:flex">
-                {isManager && (
-                  <button
-                    type="button"
-                    onClick={() => openEntryModal()}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-[#009C3B] px-3 py-2 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#008230]"
-                  >
-                    <ArrowDownToLine className="h-3.5 w-3.5" />
-                    Entrada
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => openReturnModal()}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-white px-3 py-2 text-xs font-extrabold text-[#111111] shadow-sm transition hover:bg-[#F8F9FA]"
-                >
-                  <RotateCcw className="h-3.5 w-3.5 text-[#D97706]" />
-                  Devolver
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openWithdrawalModal()}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#111111] bg-[#DC2626] px-3.5 py-2 text-xs font-extrabold text-white shadow-sm transition hover:bg-[#B91C1C]"
-                >
-                  <ArrowUpFromLine className="h-3.5 w-3.5" />
-                  Retirar
-                </button>
               </div>
             </div>
           </div>
 
-          {/* Tablet & Compact Laptop nav row (768px - 1279px) */}
-          <div className="hidden border-t border-[#111111]/20 bg-[#FFDE00] px-4 py-1.5 md:flex xl:hidden">
-            <nav className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto">
+          {/* Row 2: Dedicated High-Contrast Navigation Bar (wraps cleanly at any zoom/resolution) */}
+          <div className="hidden border-t border-[#111111] bg-[#111111] md:block">
+            <nav className="mx-auto flex max-w-7xl flex-wrap items-center gap-1.5 px-4 py-2 sm:px-6">
               {visibleNavItems.map((item) => {
                 const Icon = item.icon;
                 const active = pathname === item.href;
@@ -338,13 +318,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-extrabold ${
+                    className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-extrabold transition sm:text-sm ${
                       active
-                        ? "bg-[#111111] text-[#FFD700]"
-                        : "text-[#111111] hover:bg-[#111111]/10"
+                        ? "bg-[#FFD700] text-[#111111] shadow-sm"
+                        : "text-zinc-200 hover:bg-white/10 hover:text-[#FFD700]"
                     }`}
                   >
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-4 w-4" />
                     {item.label}
                   </Link>
                 );
