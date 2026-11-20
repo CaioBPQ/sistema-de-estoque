@@ -206,3 +206,60 @@ export const importCommitSchema = z.object({
     .default("SKIP"),
   collaboratorId: optionalTrimmedString(64),
 });
+
+const optionalHeaderText = (max: number) =>
+  z
+    .string()
+    .max(max, `Máximo de ${max} caracteres`)
+    .optional()
+    .default("")
+    .transform((val) => val.trim());
+
+const optionalOrderNumber = (decimals = 3) =>
+  z
+    .union([
+      z.coerce
+        .number({ invalid_type_error: "Informe um valor numérico válido" })
+        .finite("Valor inválido")
+        .min(0, "O valor não pode ser negativo")
+        .max(1_000_000, "Valor excede o limite permitido")
+        .transform((val) => roundQuantity(val, decimals)),
+      z.null(),
+    ])
+    .optional()
+    .default(null);
+
+export const orderHeaderSchema = z.object({
+  cliente: optionalHeaderText(160),
+  tipo: optionalHeaderText(100),
+  obs: optionalHeaderText(300),
+  dataInicial: optionalHeaderText(40),
+  dataFinal: optionalHeaderText(40),
+  comercial: optionalHeaderText(120),
+  expedicao: optionalHeaderText(120),
+  hora: optionalHeaderText(40),
+  horaFinal: optionalHeaderText(40),
+});
+
+export const orderExportItemSchema = z.object({
+  rowNumber: z.coerce
+    .number()
+    .int("Número da linha inválido")
+    .min(7, "Linha fora do catálogo oficial (7 a 241)")
+    .max(241, "Linha fora do catálogo oficial (7 a 241)"),
+  ped: optionalOrderNumber(3),
+  ret: optionalOrderNumber(3),
+  real: optionalOrderNumber(3),
+  valor: optionalOrderNumber(2),
+});
+
+export const orderExportSchema = z.object({
+  header: orderHeaderSchema,
+  items: z
+    .array(orderExportItemSchema)
+    .max(235, "Máximo de 235 itens do catálogo oficial")
+    .refine(
+      (items) => new Set(items.map((item) => item.rowNumber)).size === items.length,
+      "Linhas duplicadas enviadas na exportação do pedido"
+    ),
+});

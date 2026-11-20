@@ -274,3 +274,46 @@ export interface AIAssistantResponse {
   matches: AIAssistantMatchItem[];
   timestamp: string;
 }
+
+export interface OrderHeaderFields {
+  cliente: string;
+  tipo: string;
+  obs: string;
+  dataInicial: string;
+  dataFinal: string;
+  comercial: string;
+  expedicao: string;
+  hora: string;
+  horaFinal?: string;
+}
+
+export interface OrderTemplateCatalogItem {
+  rowNumber: number;
+  sku: string;
+  weightGrams: number;
+  description: string;
+  category: string;
+  templatePed: number | null;
+}
+
+export interface OrderTemplateResponse {
+  templateName: string;
+  sheetName: string;
+  firstCatalogRow: number;
+  lastCatalogRow: number;
+  defaultHeader: OrderHeaderFields;
+  items: OrderTemplateCatalogItem[];
+}
+
+export interface OrderExportItemInput {
+  rowNumber: number;
+  ped: number | null;
+  ret: number | null;
+  real: number | null;
+  valor: number | null;
+}
+
+export interface OrderExportRequest {
+  header: OrderHeaderFields;
+  items: OrderExportItemInput[];
+}

@@ -14,6 +14,7 @@ import {
   ArrowDownToLine,
   ArrowUpFromLine,
   CheckCircle2,
+  ClipboardList,
   FileSpreadsheet,
   History,
   LayoutGrid,
@@ -73,6 +74,7 @@ function writeActorCookie(actorId: string) {
 
 const ALL_NAV_ITEMS = [
   { href: "/", label: "Catálogo", icon: Package, managerOnly: false },
+  { href: "/pedidos", label: "Criar Pedido", icon: ClipboardList, managerOnly: false },
   { href: "/entradas", label: "Entradas & Pedidos", icon: ArrowDownToLine, managerOnly: true },
   { href: "/movimentacoes", label: "Relatórios & Histórico", icon: History, managerOnly: true },
   { href: "/importacao", label: "Importar Excel", icon: FileSpreadsheet, managerOnly: true },

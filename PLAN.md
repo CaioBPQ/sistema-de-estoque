@@ -167,12 +167,26 @@
   - **Agente responsável:** Gemini 4 Hydrogen
   - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
 
+### Fase 5 — Módulo de Criação e Exportação de Pedidos (Template Oficial Excel)
+
+- [x] **Tarefa 15 (Molde Oficial `.xlsx`, Serviço de Exportação Fiel e APIs de Pedido):**
+  - **O que fazer:** Armazenar o template oficial `prisma/templates/REMANUFATURADO NOVEMBRO 2026 ATUALIZADO.xlsx`, criar tipagens em `src/types/inventory.ts` e schemas Zod em `src/lib/validators.ts` (`orderExportSchema`), implementar `src/lib/services/order-export-service.ts` via `ExcelJS` carregando os 235 modelos oficiais exatamente das linhas 7 a 241 (`CÓDIGO` A, `PESO` B, `DESCRIÇÃO` C — indexados por `rowNumber` para preservar duplicidades de código como `VI1267` e `VI1275`) e exportando um clone fiel do workbook preenchendo apenas metadados do cabeçalho (`Cliente` B3, `Tipo` B4, `OBS.` B5, `Data Inicial` F3, `Data Final` F4, `Comercial` F5, `Hora` K3 / opcional K4, `Expedição` K5) e colunas editáveis (`E` PED, `F` RET, `H` REAL, `J` VALOR), sem sobrescrever células de fórmulas (`G`, `I`, `K`, linha `243` `TOTAIS`), mantendo mesclagens (`A2:K2`), estilos, larguras e a segunda aba `CONFERÊNCIA` intactos, atualizando apenas valores cacheados `.model.result` em harmonia com as fórmulas compartilhadas (`sharedFormula`). Expor `GET /api/orders/template` e `POST /api/orders/export`.
+  - **Arquivos exclusivos:** `prisma/templates/REMANUFATURADO NOVEMBRO 2026 ATUALIZADO.xlsx`, `src/types/inventory.ts`, `src/lib/validators.ts`, `src/lib/services/order-export-service.ts`, `src/app/api/orders/template/route.ts`, `src/app/api/orders/export/route.ts`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run typecheck && npm run lint && npm test`
+
+- [x] **Tarefa 16 (Interface de Montagem de Pedidos, Navegação e Testes Automatizados de Exportação):**
+  - **O que fazer:** Implementar a tela `/pedidos` (`src/app/pedidos/page.tsx` + `src/components/OrderBuilderView.tsx`) seguindo o design system Grupo Volantes Vitória (responsivo a zoom), com formulário do cabeçalho (`Cliente`, `Tipo`, `OBS.`, `Data Inicial`, `Data Final`, `Comercial`, `Expedição`, `Hora`), barra de totais em tempo real (peças `PED`/`RET`/`SUB`/`REAL`, peso estimado em `kg` + gramas, e valor total em `R$`), busca instantânea por código ou descrição, filtro `"Todos os itens"` vs `"Apenas itens com quantidade > 0"`, inputs editáveis (`PED`, `RET`, `REAL`, `VALOR`) e colunas calculadas (`SUB`, `PESO`, `TOTAL`), além do botão `"Exportar Pedido (Excel)"`. Adicionar item `"Criar Pedido"` em `src/components/AppShell.tsx` e criar `tests/order-export.test.ts` validando catálogo de 235 linhas (7–241), exportação `.xlsx` com preservação integral de fórmulas, mesclagens, segunda aba `CONFERÊNCIA` e validação dos endpoints.
+  - **Arquivos exclusivos:** `src/components/OrderBuilderView.tsx`, `src/app/pedidos/page.tsx`, `src/components/AppShell.tsx`, `tests/order-export.test.ts`
+  - **Agente responsável:** Gemini 4 Hydrogen
+  - **Validação:** `npm run typecheck && npm run lint && npm test && npm run build`
+
 ---
 
 ## 4. Parecer do Conselho dos Anciões (Preenchido por: Claude Opus 5.5 High — `@4-conselho.md`)
 - **Status da Revisão:** `APROVADO`
 - **Bloqueios Críticos (Bugs / Segurança / Regressão):**
-  - Nenhum pendente. Durante a auditoria e testes de concorrência, foi identificado e corrigido um deadlock de upgrade de leitura para escrita no SQLite sob múltiplas retiradas simultâneas (`runWithSqliteWriteLock` + validação prévia do colaborador antes de abrir `$transaction`), além de ajuste de fuso horário local no filtro por data e remoção de fetch externo do `next/font/google` no build.
+  - Nenhum pendente. Na Fase 5, a inspeção do molde oficial identificou dois códigos compartilhados entre modelos diferentes em linhas distintas (`VI1267` nas linhas 43 e 136; `VI1275` nas linhas 82 e 131), solucionado indexando os 235 itens estritamente por `rowNumber` (7 a 241), e sincronizando `.model.result` em células de fórmulas compartilhadas (`G`, `I`, `K`, linha `243`) sem alterar `formula`/`sharedFormula` nem a segunda aba `CONFERÊNCIA`.
 - **Sugestões Opcionais de Melhoria:**
   - Para uso em produção multi-instância no futuro, migrar o `datasource` do Prisma de SQLite para PostgreSQL mantendo os mesmos serviços e contratos.
-- **Veredito Final:** `APROVADO PARA COMMIT` (Fases 1 a 4 validadas: 12/12 testes passando, build limpo e identidade visual Grupo Volantes Vitória com contraste WCAG aplicada)
+- **Veredito Final:** `APROVADO PARA COMMIT` (Fases 1 a 5 validadas: 15/15 testes passando, build limpo e módulo de criação e exportação Excel fiel ao template oficial)
