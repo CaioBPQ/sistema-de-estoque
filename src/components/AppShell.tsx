@@ -242,8 +242,8 @@ export function AppShell({ children }: { children: ReactNode }) {
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden items-center gap-1 lg:flex">
+            {/* Desktop Navigation (1280px+) */}
+            <nav className="hidden items-center gap-1 xl:flex">
               {visibleNavItems.map((item) => {
                 const Icon = item.icon;
                 const active = pathname === item.href;
@@ -251,7 +251,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-extrabold transition xl:text-sm ${
+                    className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-extrabold transition ${
                       active
                         ? "bg-[#111111] text-[#FFD700] shadow-sm"
                         : "text-[#111111] hover:bg-[#111111]/10"
@@ -328,8 +328,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* Tablet nav row */}
-          <div className="hidden border-t border-[#111111]/20 bg-[#FFDE00] px-4 py-1.5 md:flex lg:hidden">
+          {/* Tablet & Compact Laptop nav row (768px - 1279px) */}
+          <div className="hidden border-t border-[#111111]/20 bg-[#FFDE00] px-4 py-1.5 md:flex xl:hidden">
             <nav className="mx-auto flex max-w-7xl items-center gap-1 overflow-x-auto">
               {visibleNavItems.map((item) => {
                 const Icon = item.icon;

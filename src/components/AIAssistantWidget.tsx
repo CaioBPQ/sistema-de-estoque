@@ -16,6 +16,20 @@ interface ChatTurn {
   matches?: AIAssistantMatchItem[];
 }
 
+function renderFormattedText(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, idx) => {
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return (
+        <strong key={idx} className="font-extrabold text-[#111111]">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return <span key={idx}>{part}</span>;
+  });
+}
+
 const SUGGESTED_QUESTIONS = [
   "Tem volante do Agile disponível?",
   "Quem está com volantes em uso?",
@@ -178,7 +192,7 @@ export function AIAssistantWidget() {
                       : "border border-zinc-200 bg-[#F8F9FA] font-medium text-[#111111]"
                   }`}
                 >
-                  {turn.text}
+                  {turn.sender === "assistant" ? renderFormattedText(turn.text) : turn.text}
                 </div>
 
                 {turn.matches && turn.matches.length > 0 && (
